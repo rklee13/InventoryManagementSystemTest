@@ -1,0 +1,81 @@
+body {
+    background-image: url("../Images/login-background.jpg");
+    background-position: center center; /* Just having center would be fine as it defaults to center for second one*/
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed; /* Makes sure we don't scroll with page */
+    font-family: Arial;
+}
+
+div.loginHeader {
+    text-align: center;
+    margin-bottom: 100px;
+
+    h1 {
+        font-size: 80px;
+        color: #f7104a;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    p {
+        color: #ffdae3;
+        font-size: 50px;
+        margin: 0px;
+        display: inline-block;  /* Set this to auotmatically adjust width of border */
+        text-transform: uppercase;
+    }
+
+    /* Pseudo-element to add a bottom-border of specific length */
+    p::after {
+        content: '';    /* Necessary for all pseudo-elements to work*/
+        display: block; /* Puts it on its own line */
+        width: 100%;     /* Matches length to text - need display as inline-block */
+        margin: 0px auto;   /* Centers the border */
+        border-bottom: #f7104a 5px solid;
+    }
+}
+
+div.loginBody form{
+    margin: 0 auto; /* Top & bottom are 0; left & right are auto*/
+    width: 400px;
+    background: rgba(0, 0, 0, .7); /* Background is black with .5 opacity */
+    padding: 50px;  /* padding between form and content like the username and login button */
+    border: 2px solid white;
+    border-radius: 8px; /* Add curved edges to border */
+}
+
+div.loginInputContainer {
+    margin-top: 30px;
+
+    label {
+        display: block;
+        text-transform: uppercase;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+    }
+
+    input {
+        height: 30px;
+        width: 100%;
+        border: 1px solid #d40339;
+        font-size: 20px;
+        padding: 5px;
+        text-align: center;
+        font-style: italic;
+    }
+}
+
+div.loginButtonContainer {
+    margin-top: 40px;
+    text-align: center;
+
+    .loginButton {
+        font-size: 20px;
+        padding: 10px 40px;
+        background-color: #f7104a;
+        border: none;
+        color: white;
+    }
+}
