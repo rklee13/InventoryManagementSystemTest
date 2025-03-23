@@ -1,42 +1,129 @@
+/* #region CSS reset */
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Remove default margin in favour of better control in authored CSS */
+body, h1, h2, h3, h4, p,
+figure, blockquote, dl, dd {
+  margin-block-end: 0;
+  margin: 0px;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Set core body defaults */
 body {
-    background-image: url("../Images/login-background.jpg");
-    background-position: center center; /* Just having center would be fine as it defaults to center for second one*/
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed; /* Makes sure we don't scroll with page */
-    font-family: Arial;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1, h2, h3, h4,
+button, input, label {
+  line-height: 1.1;
+}
+
+/* Balance text wrapping on headings */
+h1, h2,
+h3, h4 {
+  text-wrap: balance;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: currentColor;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input, button,
+textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+:target {
+  scroll-margin-block: 5ex;
+}
+/* #endregion */
+
+body {
+  font-family: Arial;
+}
+
+body#loginBody {
+  background-image: url("../Images/login-background.jpg");
+  background-position: center center;
+  /* Just having center would be fine as it defaults to center for second one*/
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  /* Makes sure we don't scroll with page */
 }
 
 div.loginHeader {
-    text-align: center;
-    margin-bottom: 100px;
+  text-align: center;
+  margin-bottom: 100px;
 
-    h1 {
-        font-size: 80px;
-        color: #f7104a;
-        padding: 0px;
-        margin: 0px;
-    }
+  h1 {
+    font-size: 80px;
+    color: #f7104a;
+    padding: 0px;
+    margin: 0px;
+  }
 
-    p {
-        color: #ffdae3;
-        font-size: 50px;
-        margin: 0px;
-        display: inline-block;  /* Set this to auotmatically adjust width of border */
-        text-transform: uppercase;
-    }
+  p {
+    color: #ffdae3;
+    font-size: 50px;
+    margin: 0px;
+    display: inline-block;
+    /* Set this to auotmatically adjust width of border */
+    text-transform: uppercase;
+  }
 
-    /* Pseudo-element to add a bottom-border of specific length */
-    p::after {
-        content: '';    /* Necessary for all pseudo-elements to work*/
-        display: block; /* Puts it on its own line */
-        width: 100%;     /* Matches length to text - need display as inline-block */
-        margin: 0px auto;   /* Centers the border */
-        border-bottom: #f7104a 5px solid;
-    }
+  /* Pseudo-element to add a bottom-border of specific length */
+  p::after {
+    content: '';
+    /* Necessary for all pseudo-elements to work*/
+    display: block;
+    /* Puts it on its own line */
+    width: 100%;
+    /* Matches length to text - need display as inline-block */
+    margin: 0px auto;
+    /* Centers the border */
+    border-bottom: #f7104a 5px solid;
+  }
 }
 
-div.loginBody form{
+div.loginBodyContainer form{
     margin: 0 auto; /* Top & bottom are 0; left & right are auto*/
     width: 400px;
     background: rgba(0, 0, 0, .7); /* Background is black with .5 opacity */
