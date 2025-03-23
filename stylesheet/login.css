@@ -89,6 +89,14 @@ body#loginBody {
   /* Makes sure we don't scroll with page */
 }
 
+div#errorMessage {
+  background-color: white;
+  text-align: center;
+  color: red;
+  font-size: 20px;
+  padding: 11px;
+}
+
 div.loginHeader {
   text-align: center;
   margin-bottom: 100px;
