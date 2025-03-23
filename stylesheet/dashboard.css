@@ -1,0 +1,218 @@
+/* #region CSS reset */
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Remove default margin in favour of better control in authored CSS */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin-block-end: 0;
+  margin: 0px;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1,
+h2,
+h3,
+h4,
+button,
+input,
+label {
+  line-height: 1.1;
+}
+
+/* Balance text wrapping on headings */
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: currentColor;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+:target {
+  scroll-margin-block: 5ex;
+}
+
+/* #endregion */
+
+#dashboardContainer {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;  /* This takes the entire screen height, which would apply to the containers below */
+    font-family: Arial;
+}
+
+div.dashboardSidebar {
+    width: 20%; /* This and dashboardContentContainer's width should equal 100% */
+    background: #323232;
+
+    .dashboardLogo {
+        color: #f685a1;
+        text-align: center;
+        font-size: 80px;
+    }
+
+    div.dashboardSidebarUser {
+        /* You can use vertical-align middle for the img element, but this handles multiple lines of text */
+        display: flex;
+        align-items: center;
+        justify-content: center; /* This puts content in the horizontal middle */
+        text-align: center;
+        margin-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid white;
+
+        img {
+            width: 20%;
+            display: inline-block;
+            border-radius: 50%;
+            border: 2px solid #f685a1;
+            margin-right: 10px;
+        }
+
+        span {
+            font-size: 20px;
+            text-transform: uppercase;
+            color: white;
+        }
+    }
+
+    div.dashboardSidebarMenu {
+        margin-top: 20px;
+        width: 100%;
+
+        ul.dashboardMenuLists {
+            /* Remove default padding, margin, and style for unordered list */
+            list-style: none;
+            margin: 0px;
+            padding: 0px;
+
+            font-size: 20px;
+
+            li {
+                padding: 15px 20px;
+                text-transform: uppercase;
+            }
+
+            /* TODO: REMOVE THIS ONCE YOU CAN SELECT A MENU */
+            .activeMenu {
+                background-color: #f685a1;
+                color: white;
+            }
+
+            a {
+                text-decoration: none;
+                color: white;
+                display: block;
+            }
+
+            .menuText {
+                margin-left: 5px;
+            }
+
+            i {
+                font-size: 25px;
+            }
+
+            li:hover {
+                background-color: #f685a1;
+                color: white;
+            }
+        }
+    }
+}
+
+div.dashboardContentContainer {
+    width: 80%; /* This and dashboardSidebar's width should equal 100% */
+    background: #f4f6f9;
+
+    .dashboardContentTopNav {
+        background-color: white;
+        padding: 20px;
+        color: #848383;
+        font-size: 20px;
+
+        a {
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        #logoutButton {
+            float: right;
+        }
+
+        a:hover {
+            color: #f685a1;
+        }
+    }
+
+
+    .dashboardContent {
+        padding: 50px 10px 10px 10px;
+
+        .dashboardContentMain {
+            background: white;
+            /*min-height: 800px;*/
+            height: 100%;
+        }
+    }
+}
