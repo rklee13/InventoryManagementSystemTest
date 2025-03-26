@@ -7,7 +7,7 @@ if (isset($_SESSION['user'])) header("location:dashboard.php");
 $error_message='';
 
 if ($_SERVER['REQUEST_METHOD']=='POST') {
-    include("./database/connection.php");
+    include "./database/connection.php";
 
     $email = $_POST['email'];
     $password = $_POST['password'];
