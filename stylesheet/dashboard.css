@@ -95,126 +95,130 @@ textarea:not([rows]) {
 /* #endregion */
 
 #dashboardContainer {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;  /* This takes the entire screen height, which would apply to the containers below */
-    font-family: Arial;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  /* This takes the entire screen height, which would apply to the containers below */
+  font-family: Arial;
 }
 
 div.dashboardSidebar {
-    width: 20%; /* This and dashboardContentContainer's width should equal 100% */
-    background: #323232;
+  width: 20%;
+  /* This and dashboardContentContainer's width should equal 100% */
+  background: #323232;
 
-    .dashboardLogo {
-        color: #f685a1;
-        text-align: center;
-        font-size: 80px;
+  .dashboardLogo {
+    color: #f685a1;
+    text-align: center;
+    font-size: 80px;
+  }
+
+  div.dashboardSidebarUser {
+    /* You can use vertical-align middle for the img element, but this handles multiple lines of text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* This puts content in the horizontal middle */
+    text-align: center;
+    margin-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid white;
+
+    img {
+      width: 20%;
+      display: inline-block;
+      border-radius: 50%;
+      border: 2px solid #f685a1;
+      margin-right: 10px;
     }
 
-    div.dashboardSidebarUser {
-        /* You can use vertical-align middle for the img element, but this handles multiple lines of text */
-        display: flex;
-        align-items: center;
-        justify-content: center; /* This puts content in the horizontal middle */
-        text-align: center;
-        margin-top: 20px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid white;
-
-        img {
-            width: 20%;
-            display: inline-block;
-            border-radius: 50%;
-            border: 2px solid #f685a1;
-            margin-right: 10px;
-        }
-
-        span {
-            font-size: 20px;
-            text-transform: uppercase;
-            color: white;
-        }
+    span {
+      font-size: 20px;
+      text-transform: uppercase;
+      color: white;
     }
+  }
 
-    div.dashboardSidebarMenu {
-        margin-top: 20px;
-        width: 100%;
+  div.dashboardSidebarMenu {
+    margin-top: 20px;
+    width: 100%;
 
-        ul.dashboardMenuLists {
-            /* Remove default padding, margin, and style for unordered list */
-            list-style: none;
-            margin: 0px;
-            padding: 0px;
+    ul.dashboardMenuLists {
+      /* Remove default padding, margin, and style for unordered list */
+      list-style: none;
+      margin: 0px;
+      padding: 0px;
 
-            font-size: 20px;
+      font-size: 20px;
 
-            li {
-                padding: 15px 20px;
-                text-transform: uppercase;
-            }
+      li {
+        padding: 15px 20px;
+        text-transform: uppercase;
+      }
 
-            /* TODO: REMOVE THIS ONCE YOU CAN SELECT A MENU */
-            .activeMenu {
-                background-color: #f685a1;
-                color: white;
-            }
+      /* TODO: REMOVE THIS ONCE YOU CAN SELECT A MENU */
+      .activeMenu {
+        background-color: #f685a1;
+        color: white;
+      }
 
-            a {
-                text-decoration: none;
-                color: white;
-                display: block;
-            }
+      a {
+        text-decoration: none;
+        color: white;
+        display: block;
+      }
 
-            .menuText {
-                margin-left: 5px;
-            }
+      .menuText {
+        margin-left: 5px;
+      }
 
-            i {
-                font-size: 25px;
-            }
+      i {
+        font-size: 25px;
+      }
 
-            li:hover {
-                background-color: #f685a1;
-                color: white;
-            }
-        }
+      li:hover {
+        background-color: #f685a1;
+        color: white;
+      }
     }
+  }
 }
 
 div.dashboardContentContainer {
-    width: 80%; /* This and dashboardSidebar's width should equal 100% */
-    background: #f4f6f9;
+  width: 80%;
+  /* This and dashboardSidebar's width should equal 100% */
+  background: #f4f6f9;
 
-    .dashboardContentTopNav {
-        background-color: white;
-        padding: 20px;
-        color: #848383;
-        font-size: 20px;
+  .dashboardContentTopNav {
+    background-color: white;
+    padding: 20px;
+    color: #848383;
+    font-size: 20px;
 
-        a {
-            font-size: 18px;
-            text-decoration: none;
-        }
-
-        #logoutButton {
-            float: right;
-        }
-
-        a:hover {
-            color: #f685a1;
-        }
+    a {
+      font-size: 18px;
+      text-decoration: none;
     }
 
-
-    .dashboardContent {
-        padding: 50px 10px 10px 10px;
-
-        .dashboardContentMain {
-            background: white;
-            /*min-height: 800px;*/
-            height: 100%;
-        }
+    #logoutButton {
+      float: right;
     }
+
+    a:hover {
+      color: #f685a1;
+    }
+  }
+
+
+  .dashboardContent {
+    padding: 50px 10px 10px 10px;
+
+    .dashboardContentMain {
+      background: white;
+      /*min-height: 800px;*/
+      height: 100%;
+    }
+  }
 }
 
 div#userAddFormContainer {
@@ -222,13 +226,13 @@ div#userAddFormContainer {
 }
 
 form::after {
-  content:'';
+  content: '';
   clear: both;
   display: block;
 }
 
 form.appForm {
-  width: 50%;
+  width: 90%;
   margin: 0 auto;
   padding: 10px;
   border: 1px solid #cecfd0;
@@ -260,6 +264,7 @@ form.appForm {
     float: right;
   }
 }
+
 div.responseMessage {
   font-size: 18px;
   text-align: center;
@@ -272,5 +277,71 @@ div.responseMessage {
 
   p.responseMessageFailure {
     background-color: rgba(128, 0, 0, .1);
+  }
+}
+
+/*  User Add Page */
+div.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+
+  h1 {
+    font-size: 21px;
+    color: #f685a1;
+    border-bottom: 1px solid #ffd7e1;
+    padding: 10px;
+    padding-bottom: 11px;
+    border-left: 4px solid #f690bf;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  div.column {
+    width: 100%;
+    height: inherit;
+    padding: 0px 10px;
+  }
+
+  div.column-5 {
+    width: 41.67%;
+  }
+
+  div.column-7 {
+    width: 58.33%;
+  }
+}
+
+p.totalUserCount {
+  text-align: right;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #f685a1;
+  padding: 5px;
+}
+
+table {
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #cacaca;
+  border-collapse: collapse;
+
+  th {
+    font-size: 15px;
+    text-transform: uppercase;
+    text-align: center;
+    background-color: #f4f6f9;
+  }
+
+  td {
+    font-size: 13px;
+    text-align: center;
+    padding: 5px;
   }
 }
