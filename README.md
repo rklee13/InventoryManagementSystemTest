@@ -11,3 +11,5 @@ https://www.freepik.com/free-photos-vectors/port
 
 The user profile image holder image is from:
 https://www.freepik.com/free-vector/blue-circle-with-white-user_145857007.htm#fromView=search&page=1&position=0&uuid=2b411dcf-d381-44a8-925a-3f38bc7d3c7b&query=User+Profile
+
+Downloaded compressed JQuery 3.7.1 from the website

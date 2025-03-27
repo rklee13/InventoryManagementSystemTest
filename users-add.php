@@ -71,22 +71,32 @@ $users = include 'database/showusers.php';
                                                 <th>Email</th>
                                                 <th>Created At</th>
                                                 <th>Updated At</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php foreach ($users as $index => $user): ?>
                                                 <tr>
-                                                    <td><?= $index+1 ?></td>
+                                                    <td><?= $index + 1 ?></td>
                                                     <td><?= $user['first_name'] ?></td>
                                                     <td><?= $user['last_name'] ?></td>
                                                     <td><?= $user['email'] ?></td>
                                                     <td><?= date('M d, Y h:i:s A e', strtotime($user['created_at'])) ?></td>
                                                     <td><?= date('M d, Y h:i:s A e', strtotime($user['updated_at'])) ?></td>
+                                                    <td>
+                                                        <a href="" id="editUserButton" class="editUserButton"><i
+                                                                class="fa-solid fa-pencil"></i> Edit</a>
+                                                        <a href="" id="deleteUserButton" data-userid="<?= $user['id'] ?>"
+                                                            data-fname="<?= $user['first_name'] ?>"
+                                                            data-lname="<?= $user['last_name'] ?>"
+                                                            class="deleteUserButton"><i class="fa-solid fa-trash"></i>
+                                                            Delete</a>
+                                                    </td>
                                                 </tr>
                                             <?php endforeach ?>
                                         </tbody>
                                     </table>
-                                    <p class="totalUserCount">Total Users: <?= count($users)?></p>
+                                    <p class="totalUserCount">Total Users: <?= count($users) ?></p>
                                 </div>
                             </div>
                         </div>
@@ -109,6 +119,58 @@ $users = include 'database/showusers.php';
     </div>
 
     <script src="scripts/script.js"></script>
+    <script src="scripts/jquery-3.7.1.min.js"></script>
+    <script>
+        function script() {
+            this.initialize = function () {
+                this.registerEvents();
+            },
+
+                this.registerEvents = function () {
+                    document.addEventListener('click', function (e) {
+                        const targetElement = e.target;
+                        const targetElememtId = targetElement.id;
+
+                        if (targetElememtId === 'deleteUserButton') {
+                            e.preventDefault(); // This prevents the automatic page refresh from the <a> element
+
+                            // TODO: NEED TO DETERMINE A BETTER WAY TO DO THIS
+                            const userId = targetElement.dataset.userid;
+                            const fname = targetElement.dataset.fname;
+                            const lname = targetElement.dataset.lname;
+                            const fullName = fname + ' ' + lname;
+
+                            if (window.confirm('Are you sure you want to delete ' + fullName + '?')) {
+                                $.ajax({
+                                    method:"POST",
+                                    data: {
+                                        user_id: userId,
+                                        first_name:fname,
+                                        last_name:lname,
+                                    },
+                                    url:'./database/deleteuser.php',
+                                    dataType: 'JSON',
+                                    success: function(data) {
+                                        if (data.success) {
+                                            if(window.confirm(data.message)) {
+                                                location.reload();
+                                            }
+                                        } else {
+                                            window.alert(data.message);
+                                        }
+                                    }
+                                })
+                            }
+                        } else if (targetElememtId === 'editUserButton') {
+                            console.log("edit");
+                        }
+                    });
+                }
+        }
+
+        var script = new script;
+        script.initialize();
+    </script>
 </body>
 
 </html>
