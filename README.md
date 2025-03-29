@@ -1,6 +1,12 @@
 This is inventory management system for learning/testing purposes. 
 I am following the PHP PROJECT youtube tutorial by LifeBeyondCode. 
 
+I am using XAMPP.
+Database: InventoryManagementSystem
+Table: UserLoginInformation
+
+Added Bootstrap v3 & Bootstrap dialog
+
 The images are found on Google - I own none of this.
 
 The login background image is from here:

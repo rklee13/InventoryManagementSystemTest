@@ -18,6 +18,11 @@ $users = include 'database/showusers.php';
 <head>
     <title>Dashboard - Inventory Management System</title>
     <link rel="stylesheet" href="stylesheet/dashboard.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.35.4/js/bootstrap-dialog.js"
+        integrity="sha512-AZ+KX5NScHcQKWBfRXlCtb+ckjKYLO1i10faHLPXtGacz34rhXU8KM4t77XXG/Oy9961AeLqB/5o0KTJfy2WiA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://kit.fontawesome.com/3a3f98ed32.js" crossorigin="anonymous"></script>
 </head>
 
@@ -47,7 +52,7 @@ $users = include 'database/showusers.php';
                                     </div>
                                     <div class="appFormInputContainer">
                                         <label for="email">Email:</label>
-                                        <input type="email" id="email" name="email" class="appFormInput" />
+                                        <input type="email" id="emailAdd" name="email" class="appFormInput" />
                                     </div>
                                     <div class="appFormInputContainer">
                                         <label for="password">Password:</label>
@@ -78,14 +83,15 @@ $users = include 'database/showusers.php';
                                             <?php foreach ($users as $index => $user): ?>
                                                 <tr>
                                                     <td><?= $index + 1 ?></td>
-                                                    <td><?= $user['first_name'] ?></td>
-                                                    <td><?= $user['last_name'] ?></td>
-                                                    <td><?= $user['email'] ?></td>
+                                                    <td id="firstName"><?= $user['first_name'] ?></td>
+                                                    <td id="lastName"><?= $user['last_name'] ?></td>
+                                                    <td id="email"><?= $user['email'] ?></td>
                                                     <td><?= date('M d, Y h:i:s A e', strtotime($user['created_at'])) ?></td>
                                                     <td><?= date('M d, Y h:i:s A e', strtotime($user['updated_at'])) ?></td>
                                                     <td>
-                                                        <a href="" id="editUserButton" class="editUserButton"><i
-                                                                class="fa-solid fa-pencil"></i> Edit</a>
+                                                        <a href="" id="editUserButton" data-userid="<?= $user['id'] ?>"
+                                                            class="editUserButton"><i class="fa-solid fa-pencil"></i>
+                                                            Edit</a>
                                                         <a href="" id="deleteUserButton" data-userid="<?= $user['id'] ?>"
                                                             data-fname="<?= $user['first_name'] ?>"
                                                             data-lname="<?= $user['last_name'] ?>"
@@ -120,6 +126,23 @@ $users = include 'database/showusers.php';
 
     <script src="scripts/script.js"></script>
     <script src="scripts/jquery-3.7.1.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.35.4/js/bootstrap-dialog.min.js"
+        integrity="sha512-LbO5ZwEjd9FPp4KVKsS6fBk2RRvKcXYcsHatEapmINf8bMe9pONiJbRWTG9CF/WDzUig99yvvpGb64dNQ27Y4g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
         function script() {
             this.initialize = function () {
@@ -140,29 +163,104 @@ $users = include 'database/showusers.php';
                             const lname = targetElement.dataset.lname;
                             const fullName = fname + ' ' + lname;
 
-                            if (window.confirm('Are you sure you want to delete ' + fullName + '?')) {
-                                $.ajax({
-                                    method:"POST",
-                                    data: {
-                                        user_id: userId,
-                                        first_name:fname,
-                                        last_name:lname,
-                                    },
-                                    url:'./database/deleteuser.php',
-                                    dataType: 'JSON',
-                                    success: function(data) {
-                                        if (data.success) {
-                                            if(window.confirm(data.message)) {
-                                                location.reload();
+                            BootstrapDialog.confirm({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                message: 'Are you sure you want to delete ' + fullName + '?',
+                                callback: function (isDelete) {
+                                    if (isDelete) {
+                                        $.ajax({
+                                            method: "POST",
+                                            data: {
+                                                user_id: userId,
+                                                first_name: fname,
+                                                last_name: lname,
+                                            },
+                                            url: './database/deleteuser.php',
+                                            dataType: 'JSON',
+                                            success: function (data) {
+                                                if (data.success) {
+                                                    BootstrapDialog.alert({
+                                                        type: BootstrapDialog.TYPE_SUCCESS,
+                                                        message: data.message,
+                                                        callback: function () {
+                                                            location.reload();
+                                                        }
+                                                    });
+                                                } else {
+                                                    wBootstrapDialog.alert({
+                                                        type: BootstrapDialog.TYPE_DANGER,
+                                                        message: data.message,
+                                                        callback: function () {
+                                                            location.reload();
+                                                        }
+                                                    });
+                                                }
                                             }
-                                        } else {
-                                            window.alert(data.message);
-                                        }
+                                        });
                                     }
-                                })
-                            }
+                                }
+                            });
                         } else if (targetElememtId === 'editUserButton') {
-                            console.log("edit");
+                            e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
+
+                            // Get the data
+                            const userId = targetElement.dataset.userid;
+                            const firstName = targetElement.closest('tr').querySelector("#firstName").textContent;
+                            const lastName = targetElement.closest('tr').querySelector("#lastName").textContent;
+                            const email = targetElement.closest('tr').querySelector("#email").textContent;
+
+
+                            BootstrapDialog.confirm({
+                                title: 'Update ' + firstName + ' ' + lastName,
+                                message: '<form>\
+                                <div class="form-group">\
+                                <label for="firstName">First Name:</label>\
+                                <input type="text" class="form-control" id="firstNameUpdate" value="'+ firstName + '">\
+                                </div>\
+                                <div class="form-group">\
+                                <label for="lastName">Last Name:</label>\
+                                <input type="text" class="form-control" id="lastNameUpdate" value="'+ lastName + '">\
+                                </div>\
+                                <div class="form-group">\
+                                <label for="email">email:</label>\
+                                <input type="email" class="form-control" id="emailUpdate" value="'+ email + '">\
+                                </div>\
+                                </form>',
+                                callback: function (isUpdate) {
+                                    if (isUpdate) { // if user clicked "Ok" button
+                                        $.ajax({
+                                            method: "POST",
+                                            data: {
+                                                user_id: userId,
+                                                first_name: document.getElementById("firstNameUpdate").value,
+                                                last_name: document.getElementById("lastNameUpdate").value,
+                                                email: document.getElementById("emailUpdate").value,
+                                            },
+                                            url: './database/updateuser.php',
+                                            dataType: 'JSON',
+                                            success: function (data) {
+                                                if (data.success) {
+                                                    BootstrapDialog.alert({
+                                                        type: BootstrapDialog.TYPE_SUCCESS,
+                                                        message: data.message,
+                                                        callback: function () {
+                                                            location.reload();
+                                                        }
+                                                    });
+                                                } else {
+                                                    wBootstrapDialog.alert({
+                                                        type: BootstrapDialog.TYPE_DANGER,
+                                                        message: data.message,
+                                                        callback: function () {
+                                                            location.reload();
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                         }
                     });
                 }
