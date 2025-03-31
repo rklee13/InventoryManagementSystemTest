@@ -148,18 +148,20 @@ div.dashboardSidebar {
       list-style: none;
       margin: 0px;
       padding: 0px;
-
       font-size: 20px;
 
-      li {
-        padding: 15px 20px;
+      li.listMainMenuItem {
         text-transform: uppercase;
-      }
 
-      /* TODO: REMOVE THIS ONCE YOU CAN SELECT A MENU */
-      .activeMenu {
-        background-color: #f685a1;
-        color: white;
+        a {
+          padding: 15px 25px;
+        }
+
+        i.mainMenuChevron {
+          float: right;
+          font-size: 20px;
+          margin-top: .5rem;
+        }
       }
 
       a {
@@ -181,6 +183,31 @@ div.dashboardSidebar {
         color: white;
       }
     }
+
+    ul.subMenus {
+      list-style: none;
+      background-color: #c26a80;
+      padding-left: 0px;
+      display: none;
+
+      .subMenuActive {
+        font-weight: bold;
+        border-top: 2px solid white;
+        border-bottom: 2px solid white;
+        background-color: #763a49;
+      }
+
+      a.subMenuLink {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-transform: none;
+
+        i {
+          font-size: 16px;
+          padding-right: 5px;
+        }
+      }
+    } 
   }
 }
 

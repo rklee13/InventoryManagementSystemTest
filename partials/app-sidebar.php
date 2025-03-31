@@ -6,19 +6,56 @@
     </div>
     <div class="dashboardSidebarMenu">
         <ul class="dashboardMenuLists">
-        <!-- class="activeMenu" -->
-            <li>
+            <!-- class="activeMenu" -->
+            <li class="listMainMenuItem">
                 <a href="./dashboard.php"><i class="fa-solid fa-gauge"></i><span class="menuText">Dashboard</span></a>
             </li>
-            <li>
-                <a href="./users-add.php"><i class="fa-solid fa-user-plus"></i><span class="menuText">Add User</span></a>
+            <li class="listMainMenuItem">
+                <a href="javascript:void(0)" class="showHideSubMenu">
+                    <i class="fa-solid fa-tag"></i>
+                    <span class="menuText showHideSubMenu">Product Management</span>
+                    <i class="fa-solid fa-chevron-left mainMenuChevron showHideSubMenu"></i>
+                </a>
+                <ul id="supplierSubMenus" class="subMenus">
+                    <li>
+                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> View Product</a>
+                    </li>
+                    <li>
+                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> Add Product</a>
+                    </li>
+                </ul>
             </li>
-            <!-- <li>
-                <a href=""><i class="fa-solid fa-dollar-sign"></i><span class="menuText">Revenue Management</span></a>
+            <li class="listMainMenuItem">
+                <a href="javascript:void(0)" class="showHideSubMenu">
+                    <i class="fa-solid fa-truck"></i>
+                    <span class="menuText showHideSubMenu">Supplier Management</span>
+                    <i class="fa-solid fa-chevron-left mainMenuChevron showHideSubMenu"></i>
+                </a>
+                <ul id="supplierSubMenus" class="subMenus">
+                    <li>
+                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> View Supplier</a>
+                    </li>
+                    <li>
+                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> Add Supplier</a>
+                    </li>
+                </ul>
             </li>
-            <li>
-                <a href=""><i class="fa-solid fa-book"></i><span class="menuText">Accounts Receivable</span></a>
+            <li class="listMainMenuItem showHideSubMenu">
+                <a href="javascript:void(0)" id="listMainMenuItemUserManagement" class="showHideSubMenu">
+                    <i class="fa-solid fa-user-plus showHideSubMenu"></i>
+                    <span class="menuText showHideSubMenu">User Management</span>
+                    <i class="fa-solid fa-chevron-left mainMenuChevron showHideSubMenu"></i>
+                </a>
+                <ul id="userAddSubMenus" class="subMenus">
+                    <li>
+                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> View Users</a>
+                    </li>
+                    <li>
+                        <a class="subMenuLink" href="./users-add.php"><i class="fa-regular fa-circle"></i> Add Users</a>
+                    </li>
+                </ul>
             </li>
+            <!-- 
             <li>
                 <a href=""><i class="fa-solid fa-gears"></i><span class="menuText">Configuration</span></a>
             </li>
