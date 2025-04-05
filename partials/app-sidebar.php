@@ -18,10 +18,10 @@
                 </a>
                 <ul id="supplierSubMenus" class="subMenus">
                     <li>
-                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> View Product</a>
+                        <a class="subMenuLink" href="./product-view.php"><i class="fa-regular fa-circle"></i> View Product</a>
                     </li>
                     <li>
-                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> Add Product</a>
+                        <a class="subMenuLink" href="./product-add.php"><i class="fa-regular fa-circle"></i> Add Product</a>
                     </li>
                 </ul>
             </li>
@@ -48,7 +48,7 @@
                 </a>
                 <ul id="userAddSubMenus" class="subMenus">
                     <li>
-                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> View Users</a>
+                        <a class="subMenuLink" href="./users-view.php"><i class="fa-regular fa-circle"></i> View Users</a>
                     </li>
                     <li>
                         <a class="subMenuLink" href="./users-add.php"><i class="fa-regular fa-circle"></i> Add Users</a>

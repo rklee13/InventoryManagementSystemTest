@@ -5,11 +5,9 @@ session_start();
 if (!isset($_SESSION['user']))
     header("location:login.php");
 
-$_SESSION['table'] = 'UserLoginInformation';
+$_SESSION['table'] = 'products';
+$_SESSION['redirect_to'] = 'product-add.php';
 $user = $_SESSION['user'];
-$_SESSION['redirect_to'] = 'users-add.php';
-
-$users = include 'database/showusers.php';
 
 ?>
 
@@ -17,7 +15,7 @@ $users = include 'database/showusers.php';
 <html>
 
 <head>
-    <title>Add Users - Inventory Management System</title>
+    <title>Add Product - Inventory Management System</title>
     <?php include('partials/app-headers-script.php'); ?>
 </head>
 
@@ -34,27 +32,19 @@ $users = include 'database/showusers.php';
                 <div class="dashboardContentMain">
                     <div class="row">
                         <div class="column column-12">
-                            <h1><i class="fa-solid fa-user-plus"></i> Create User</h1>
+                            <h1><i class="fa-solid fa-user-plus"></i> Create Product</h1>
                             <div id="userAddFormContainer">
                                 <form action="database/add.php" method="POST" class="appForm">
                                     <div class="appFormInputContainer">
-                                        <label for="first_name">First Name:</label>
-                                        <input type="text" id="first_name" name="first_name" class="appFormInput" />
+                                        <label for="product_name">Product Name:</label>
+                                        <input type="text" id="product_name" name="product_name" class="appFormInput" placeholder="Enter product name"/>
                                     </div>
                                     <div class="appFormInputContainer">
-                                        <label for="last_name">Last Name:</label>
-                                        <input type="text" id="last_name" name="last_name" class="appFormInput" />
-                                    </div>
-                                    <div class="appFormInputContainer">
-                                        <label for="email">Email:</label>
-                                        <input type="email" id="emailAdd" name="email" class="appFormInput" />
-                                    </div>
-                                    <div class="appFormInputContainer">
-                                        <label for="password">Password:</label>
-                                        <input type="password" id="password" name="password" class="appFormInput" />
+                                        <label for="description">Description:</label>
+                                        <textarea id="description" name="description" class="appFormInput" placeholder="Enter product description"></textarea>
                                     </div>
                                     <button type="Submit" class="addUserButton"><i class="fa-solid fa-plus"></i> Add
-                                        User</button>
+                                        Product</button>
                                 </form>
                             </div>
                         </div>
