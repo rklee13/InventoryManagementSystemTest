@@ -8,9 +8,6 @@ if (!isset($_SESSION['user']))
 $_SESSION['table'] = 'UserLoginInformation';
 $user = $_SESSION['user'];
 $_SESSION['redirect_to'] = 'users-add.php';
-
-$users = include 'database/showusers.php';
-
 ?>
 
 <!DOCTYPE html>

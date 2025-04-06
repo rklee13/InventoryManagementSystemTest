@@ -6,10 +6,7 @@ if (!isset($_SESSION['user']))
     header("location:login.php");
 
 $_SESSION['table'] = 'products';
-$user = $_SESSION['user'];
-
-$users = include 'database/showusers.php';
-
+$products = include 'database/showAll.php';
 ?>
 
 <!DOCTYPE html>
@@ -40,38 +37,41 @@ $users = include 'database/showusers.php';
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>First Name</th>
-                                                <th>Last Name</th>
-                                                <th>Email</th>
+                                                <th>Image</th>
+                                                <th>Product Name</th>
+                                                <th>Description</th>
+                                                <th>Created By</th>
                                                 <th>Created At</th>
                                                 <th>Updated At</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($users as $index => $user): ?>
+                                            <?php foreach ($products as $index => $product): ?>
                                                 <tr>
                                                     <td><?= $index + 1 ?></td>
-                                                    <td id="firstName"><?= $user['first_name'] ?></td>
-                                                    <td id="lastName"><?= $user['last_name'] ?></td>
-                                                    <td id="email"><?= $user['email'] ?></td>
-                                                    <td><?= date('M d, Y h:i:s A e', strtotime($user['created_at'])) ?></td>
-                                                    <td><?= date('M d, Y h:i:s A e', strtotime($user['updated_at'])) ?></td>
+                                                    <td id="image">
+                                                        <img class="productImages" src="uploads/products/<?= $product['image'] ?>" />
+                                                    </td>
+                                                    <td id="productName"><?= $product['product_name'] ?></td>
+                                                    <td id="description"><?= $product['description'] ?></td>
+                                                    <td id="createdBy""><?= $product['created_by']?></td>
+                                                    <td><?= date('M d, Y h:i:s A e', strtotime($product['created_at'])) ?></td>
+                                                    <td><?= date('M d, Y h:i:s A e', strtotime($product['updated_at'])) ?></td>
                                                     <td>
-                                                        <a href="" id="editUserButton" data-userid="<?= $user['id'] ?>"
-                                                            class="editUserButton"><i class="fa-solid fa-pencil"></i>
+                                                        <a href="" id="editButton" data-userid="<?= $product['id'] ?>"
+                                                            class="editButton"><i class="fa-solid fa-pencil"></i>
                                                             Edit</a>
-                                                        <a href="" id="deleteUserButton" data-userid="<?= $user['id'] ?>"
-                                                            data-fname="<?= $user['first_name'] ?>"
-                                                            data-lname="<?= $user['last_name'] ?>"
-                                                            class="deleteUserButton"><i class="fa-solid fa-trash"></i>
+                                                        <a href="" id="deleteButton" data-userid="<?= $product['id'] ?>"
+                                                            data-pname="<?= $product['product_name'] ?>"
+                                                            class="deleteButton"><i class="fa-solid fa-trash"></i>
                                                             Delete</a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>
                                         </tbody>
                                     </table>
-                                    <p class="totalUserCount">Total Users: <?= count($users) ?></p>
+                                    <p class="totalUserCount">Total Products: <?= count($products) ?></p>
                                 </div>
                             </div>
                         </div>
@@ -95,130 +95,6 @@ $users = include 'database/showusers.php';
 
     <?php include('partials/app-scripts.php')?>
     <script>
-        function script() {
-            this.initialize = function () {
-                this.registerEvents();
-            },
-
-                this.registerEvents = function () {
-                    document.addEventListener('click', function (e) {
-                        const targetElement = e.target;
-                        const targetElememtId = targetElement.id;
-
-                        if (targetElememtId === 'deleteUserButton') {
-                            e.preventDefault(); // This prevents the automatic page refresh from the <a> element
-
-                            // TODO: NEED TO DETERMINE A BETTER WAY TO DO THIS
-                            const userId = targetElement.dataset.userid;
-                            const fname = targetElement.dataset.fname;
-                            const lname = targetElement.dataset.lname;
-                            const fullName = fname + ' ' + lname;
-
-                            BootstrapDialog.confirm({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                message: 'Are you sure you want to delete ' + fullName + '?',
-                                callback: function (isDelete) {
-                                    if (isDelete) {
-                                        $.ajax({
-                                            method: "POST",
-                                            data: {
-                                                user_id: userId,
-                                                first_name: fname,
-                                                last_name: lname,
-                                            },
-                                            url: './database/delete.php',
-                                            dataType: 'JSON',
-                                            success: function (data) {
-                                                if (data.success) {
-                                                    BootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_SUCCESS,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
-                                                } else {
-                                                    wBootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_DANGER,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        } else if (targetElememtId === 'editUserButton') {
-                            e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
-
-                            // Get the data
-                            const userId = targetElement.dataset.userid;
-                            const firstName = targetElement.closest('tr').querySelector("#firstName").textContent;
-                            const lastName = targetElement.closest('tr').querySelector("#lastName").textContent;
-                            const email = targetElement.closest('tr').querySelector("#email").textContent;
-
-
-                            BootstrapDialog.confirm({
-                                title: 'Update ' + firstName + ' ' + lastName,
-                                message: '<form>\
-                                <div class="form-group">\
-                                <label for="firstName">First Name:</label>\
-                                <input type="text" class="form-control" id="firstNameUpdate" value="'+ firstName + '">\
-                                </div>\
-                                <div class="form-group">\
-                                <label for="lastName">Last Name:</label>\
-                                <input type="text" class="form-control" id="lastNameUpdate" value="'+ lastName + '">\
-                                </div>\
-                                <div class="form-group">\
-                                <label for="email">email:</label>\
-                                <input type="email" class="form-control" id="emailUpdate" value="'+ email + '">\
-                                </div>\
-                                </form>',
-                                callback: function (isUpdate) {
-                                    if (isUpdate) { // if user clicked "Ok" button
-                                        $.ajax({
-                                            method: "POST",
-                                            data: {
-                                                user_id: userId,
-                                                first_name: document.getElementById("firstNameUpdate").value,
-                                                last_name: document.getElementById("lastNameUpdate").value,
-                                                email: document.getElementById("emailUpdate").value,
-                                            },
-                                            url: './database/update.php',
-                                            dataType: 'JSON',
-                                            success: function (data) {
-                                                if (data.success) {
-                                                    BootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_SUCCESS,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
-                                                } else {
-                                                    wBootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_DANGER,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
-        }
-
-        var script = new script;
-        script.initialize();
     </script>
 </body>
 

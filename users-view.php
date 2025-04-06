@@ -8,8 +8,7 @@ if (!isset($_SESSION['user']))
 $_SESSION['table'] = 'UserLoginInformation';
 $user = $_SESSION['user'];
 
-$users = include 'database/showusers.php';
-
+$users = include 'database/showAll.php';
 ?>
 
 <!DOCTYPE html>
