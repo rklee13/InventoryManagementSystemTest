@@ -12,23 +12,43 @@ $columns = $table_columns_mapping[$table_name];
 // Loop through the columns
 $databaseArray = [];
 $user = $_SESSION['user'];
-foreach($columns as $column) {
-    if (in_array($column, ['created_at','updated_at'])) {
+foreach ($columns as $column) {
+    // Reset the value variable
+    $value=null;
+
+    if (in_array($column, ['created_at', 'updated_at'])) {
         $value = date('Y-m-d H:i:s');
     } else if ($column == 'created_by') {
         $value = $user['id'];
     } else if ($column == 'password' && isset($_POST[$column])) {
         // Hash the password if provided
-        $value=password_hash($_POST[$column], PASSWORD_DEFAULT);
+        $value = password_hash($_POST[$column], PASSWORD_DEFAULT);
+    } else if ($column == 'image') {
+        // Upload/move file to our directory
+        $target_directory = "../uploads/products/";
+        $file_data = $_FILES[$column];
+        // Give unique file name with timestamp
+        $file_name = 'product-' . time() . '-' . $file_data['name'];
+        // $file_extension = pathinfo($file_name,PATHINFO_EXTENSION); // This will get the file extension
+
+        // Check if image is valid by seeing if we get a valid image size data
+        $check = getimagesize($file_data['tmp_name']);
+        if ($check) {
+            // Move the file
+            if (move_uploaded_file($file_data['tmp_name'], $target_directory . $file_name)) {
+                // Save path to our database
+                $value = $file_name;
+            }
+        }
     } else {
         $value = isset($_POST[$column]) ? $_POST[$column] : '';
     }
-    $databaseArray[$column]=$value;
+    $databaseArray[$column] = $value;
 }
 
 // Convert the column names into a string for SQL
-$table_properties = implode(', ', array_keys($databaseArray)); 
-$table_values = ":". implode(", :", array_keys($databaseArray));
+$table_properties = implode(', ', array_keys($databaseArray));
+$table_values = ":" . implode(", :", array_keys($databaseArray));
 
 // Adding the record
 try {
@@ -37,14 +57,14 @@ try {
     $connection->prepare($insert_query)->execute($databaseArray);
 
     $response = [
-        'success'=> true,
-        'message'=> 'Successfully added to the system.',
+        'success' => true,
+        'message' => 'Successfully added to the system.',
     ];
 
 } catch (PDOException $e) {
     $response = [
-        'success'=> false,
-        'message'=> $e->getMessage(),
+        'success' => false,
+        'message' => $e->getMessage(),
     ];
 }
 
