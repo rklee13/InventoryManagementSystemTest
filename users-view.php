@@ -107,7 +107,6 @@ $users = include 'database/showAll.php';
                         if (targetElememtId === 'deleteUserButton') {
                             e.preventDefault(); // This prevents the automatic page refresh from the <a> element
 
-                            // TODO: NEED TO DETERMINE A BETTER WAY TO DO THIS
                             const userId = targetElement.dataset.userid;
                             const fname = targetElement.dataset.fname;
                             const lname = targetElement.dataset.lname;
@@ -115,36 +114,26 @@ $users = include 'database/showAll.php';
 
                             BootstrapDialog.confirm({
                                 type: BootstrapDialog.TYPE_DANGER,
-                                message: 'Are you sure you want to delete ' + fullName + '?',
+                                title: 'Delete User',
+                                message: 'Are you sure you want to delete <strong>' + fullName + '</strong>?',
                                 callback: function (isDelete) {
                                     if (isDelete) {
                                         $.ajax({
                                             method: "POST",
                                             data: {
-                                                user_id: userId,
-                                                first_name: fname,
-                                                last_name: lname,
+                                                id: userId,
+                                                name: fullName,
                                             },
                                             url: './database/delete.php',
                                             dataType: 'JSON',
                                             success: function (data) {
-                                                if (data.success) {
-                                                    BootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_SUCCESS,
+                                                BootstrapDialog.alert({
+                                                        type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
                                                         message: data.message,
                                                         callback: function () {
-                                                            location.reload();
+                                                            if (data.success) location.reload();
                                                         }
                                                     });
-                                                } else {
-                                                    wBootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_DANGER,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
-                                                }
                                             }
                                         });
                                     }
@@ -158,10 +147,11 @@ $users = include 'database/showAll.php';
                             const firstName = targetElement.closest('tr').querySelector("#firstName").textContent;
                             const lastName = targetElement.closest('tr').querySelector("#lastName").textContent;
                             const email = targetElement.closest('tr').querySelector("#email").textContent;
+                            const fullName = firstName + ' ' + lastName;
 
 
                             BootstrapDialog.confirm({
-                                title: 'Update ' + firstName + ' ' + lastName,
+                                title: 'Update ' + fullName,
                                 message: '<form>\
                                 <div class="form-group">\
                                 <label for="firstName">First Name:</label>\
@@ -181,7 +171,8 @@ $users = include 'database/showAll.php';
                                         $.ajax({
                                             method: "POST",
                                             data: {
-                                                user_id: userId,
+                                                id: userId,
+                                                name: fullName,
                                                 first_name: document.getElementById("firstNameUpdate").value,
                                                 last_name: document.getElementById("lastNameUpdate").value,
                                                 email: document.getElementById("emailUpdate").value,

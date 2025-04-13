@@ -1,7 +1,9 @@
 <?php
 
 session_start();
-$user_id =(int)$_POST['user_id'];
+$id =(int)$_POST['id'];
+$name=$_POST['name'];
+
 $first_name=$_POST['first_name'];
 $last_name=$_POST['last_name'];
 $email=$_POST['email'];
@@ -11,12 +13,12 @@ try {
     include "connection.php";
     $table_name = $_SESSION['table'];
 
-    $update_query = "UPDATE UserLoginInformation SET first_name=?, last_name=?, email=?, updated_at=? WHERE id=?";
-    $connection->prepare($update_query)->execute([$first_name, $last_name,$email, date('Y-m-d h:i:s'), $user_id]);
+    $update_query = "UPDATE $table_name SET first_name=?, last_name=?, email=?, updated_at=? WHERE id=?";
+    $connection->prepare($update_query)->execute([$first_name, $last_name,$email, date('Y-m-d h:i:s'), $id]);
 
     echo json_encode([
         'success'=> true,
-        'message' => $first_name .' ' . $last_name . ' was successfully updated.',
+        'message' => $name . ' was successfully updated.',
     ]);
 
 } catch (PDOException $e) {
