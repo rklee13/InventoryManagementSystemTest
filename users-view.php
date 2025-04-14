@@ -92,7 +92,7 @@ $users = include 'database/showAll.php';
         </div>
     </div>
 
-    <?php include('partials/app-scripts.php')?>
+    <?php include('partials/app-scripts.php') ?>
     <script>
         function script() {
             this.initialize = function () {
@@ -128,12 +128,12 @@ $users = include 'database/showAll.php';
                                             dataType: 'JSON',
                                             success: function (data) {
                                                 BootstrapDialog.alert({
-                                                        type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            if (data.success) location.reload();
-                                                        }
-                                                    });
+                                                    type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
+                                                    message: data.message,
+                                                    callback: function () {
+                                                        if (data.success) location.reload();
+                                                    }
+                                                });
                                             }
                                         });
                                     }
@@ -180,23 +180,13 @@ $users = include 'database/showAll.php';
                                             url: './database/update.php',
                                             dataType: 'JSON',
                                             success: function (data) {
-                                                if (data.success) {
-                                                    BootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_SUCCESS,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
-                                                } else {
-                                                    wBootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_DANGER,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
-                                                }
+                                                BootstrapDialog.alert({
+                                                    type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
+                                                    message: data.message,
+                                                    callback: function () {
+                                                        location.reload();
+                                                    }
+                                                });
                                             }
                                         });
                                     }

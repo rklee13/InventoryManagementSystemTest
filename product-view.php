@@ -51,18 +51,31 @@ $products = include 'database/showAll.php';
                                                 <tr>
                                                     <td><?= $index + 1 ?></td>
                                                     <td id="image">
-                                                        <img class="productImages" src="uploads/products/<?= $product['image'] ?>" />
+                                                        <img class="productImages"
+                                                            src="uploads/products/<?= $product['image'] ?>" />
                                                     </td>
                                                     <td id="productName"><?= $product['product_name'] ?></td>
                                                     <td id="description"><?= $product['description'] ?></td>
-                                                    <td id="createdBy""><?= $product['created_by']?></td>
+                                                    <td id="createdBy"">
+                                                        <?php
+                                                        $productId = $product['created_by'];
+                                                        $stmt = $connection->prepare("SELECT * FROM UserLoginInformation WHERE id=$productId");
+                                                        $stmt->execute();
+                                                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                                                        $created_by = $row['first_name'] . ' ' . $row['last_name'];
+                                                        echo $created_by;
+                                                        ?>
+                                                    </td>
                                                     <td><?= date('M d, Y h:i:s A e', strtotime($product['created_at'])) ?></td>
                                                     <td><?= date('M d, Y h:i:s A e', strtotime($product['updated_at'])) ?></td>
                                                     <td>
-                                                        <a href="" id="editProductButton" data-productid="<?= $product['id'] ?>"
-                                                            class="editButton"><i class="fa-solid fa-pencil"></i>
-                                                            Edit</a>
-                                                        <a href="" id="deleteProductButton" data-productid="<?= $product['id'] ?>"
+                                                        <a href="" id="editProductButton"
+                                                        data-productid="<?= $product['id'] ?>" class="editButton"><i
+                                                            class="fa-solid fa-pencil"></i>
+                                                        Edit</a> |
+                                                        <a href="" id="deleteProductButton"
+                                                            data-productid="<?= $product['id'] ?>"
                                                             data-productname="<?= $product['product_name'] ?>"
                                                             class="deleteButton"><i class="fa-solid fa-trash"></i>
                                                             Delete</a>
@@ -93,119 +106,111 @@ $products = include 'database/showAll.php';
         </div>
     </div>
 
-    <?php include('partials/app-scripts.php')?>
+    <?php include('partials/app-scripts.php') ?>
     <script>
         function script() {
             this.initialize = function () {
                 this.registerEvents();
             }
+            var vm = this;
 
             this.registerEvents = function () {
-                    document.addEventListener('click', function (e) {
-                        const targetElement = e.target;
-                        const targetElememtId = targetElement.id;
 
-                        if (targetElememtId === 'deleteProductButton') {
-                            e.preventDefault(); // This prevents the automatic page refresh from the <a> element
+                document.addEventListener('click', function (e) {
+                    const targetElement = e.target;
+                    const targetElememtId = targetElement.id;
 
-                            const productId = targetElement.dataset.productid;
-                            const productName = targetElement.dataset.productname;
+                    if (targetElememtId === 'deleteProductButton') {
+                        e.preventDefault(); // This prevents the automatic page refresh from the <a> element
 
-                            BootstrapDialog.confirm({
-                                type: BootstrapDialog.TYPE_DANGER,
-                                title: 'Delete Product',
-                                message: 'Are you sure you want to delete <strong>' + productName + '</strong>?',
-                                callback: function (isDelete) {
-                                    if (isDelete) {
-                                        $.ajax({
-                                            method: "POST",
-                                            data: {
-                                                id: productId,
-                                                name: productName,
-                                                table: 'products',
-                                            },
-                                            url: './database/delete.php',
-                                            dataType: 'JSON',
-                                            success: function (data) {
-                                                
-                                                BootstrapDialog.alert({
-                                                        type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            if (data.success) location.reload();
-                                                        }
-                                                    });
-                                            }
-                                        });
-                                    }
+                        const productId = targetElement.dataset.productid;
+                        const productName = targetElement.dataset.productname;
+
+                        BootstrapDialog.confirm({
+                            type: BootstrapDialog.TYPE_DANGER,
+                            title: 'Delete Product',
+                            message: 'Are you sure you want to delete <strong>' + productName + '</strong>?',
+                            callback: function (isDelete) {
+                                if (isDelete) {
+                                    $.ajax({
+                                        method: "POST",
+                                        data: {
+                                            id: productId,
+                                            name: productName,
+                                            table: 'products',
+                                        },
+                                        url: './database/delete.php',
+                                        dataType: 'JSON',
+                                        success: function (data) {
+
+                                            BootstrapDialog.alert({
+                                                type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
+                                                message: data.message,
+                                                callback: function () {
+                                                    if (data.success) location.reload();
+                                                }
+                                            });
+                                        }
+                                    });
                                 }
-                            });
-                        } else if (targetElememtId === 'editProductButton') {
-                            e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
+                            }
+                        });
+                    } else if (targetElememtId === 'editProductButton') {
+                        e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
 
-                            // Get the data
-                            const productId = targetElememt.dataset.productid;
+                        // Get the data
+                        const productId = targetElement.dataset.productid;
+                        vm.showEditDialog(productId);
+                    }
+                });
+            }
 
-                            const userId = targetElement.dataset.userid;
-                            const firstName = targetElement.closest('tr').querySelector("#firstName").textContent;
-                            const lastName = targetElement.closest('tr').querySelector("#lastName").textContent;
-                            const email = targetElement.closest('tr').querySelector("#email").textContent;
-
-
-                            BootstrapDialog.confirm({
-                                title: 'Update ' + firstName + ' ' + lastName,
-                                message: '<form>\
-                                <div class="form-group">\
-                                <label for="firstName">First Name:</label>\
-                                <input type="text" class="form-control" id="firstNameUpdate" value="'+ firstName + '">\
+            this.showEditDialog = function (id) {
+                $.get('database/getProduct.php', { id: id }, function (productDetails) {
+                    BootstrapDialog.confirm({
+                        title: 'Update <strong>' + productDetails.product_name + '</strong>',
+                        message: '<form id="editDialogForm" method="POST" class="appForm" enctype="multipart/form-data">\
+                                <input type="hidden" name="id" value="'+id+'"/>\
+                                <div class="appFormInputContainer">\
+                                <label for="product_name">Product Name:</label>\
+                                <input type="text" id="product_name" name="product_name" class="appFormInput" placeholder="Enter product name" value="'+productDetails.product_name+'"/>\
                                 </div>\
-                                <div class="form-group">\
-                                <label for="lastName">Last Name:</label>\
-                                <input type="text" class="form-control" id="lastNameUpdate" value="'+ lastName + '">\
+                                <div class="appFormInputContainer">\
+                                <label for="product_image">Product Image:</label>\
+                                <input type="file" id="product_image" name="image" value="'+productDetails.image+'"/>\
                                 </div>\
-                                <div class="form-group">\
-                                <label for="email">email:</label>\
-                                <input type="email" class="form-control" id="emailUpdate" value="'+ email + '">\
-                                </div>\
-                                </form>',
-                                callback: function (isUpdate) {
-                                    if (isUpdate) { // if user clicked "Ok" button
-                                        $.ajax({
-                                            method: "POST",
-                                            data: {
-                                                user_id: userId,
-                                                first_name: document.getElementById("firstNameUpdate").value,
-                                                last_name: document.getElementById("lastNameUpdate").value,
-                                                email: document.getElementById("emailUpdate").value,
-                                            },
-                                            url: './database/update.php',
-                                            dataType: 'JSON',
-                                            success: function (data) {
+                                <div class="appFormInputContainer">\
+                                <label for="description">Description:</label>\
+                                <textarea id="description" name="description" class="appFormInput" placeholder="Enter product description">'+productDetails.description+'</textarea>\
+                                </div></form>\
+                                ',
+                        callback: function (isUpdate) {
+                            if (isUpdate) { // if user clicked "Ok" button
+                                $.ajax({
+                                    method: "POST",
+                                    data: new FormData(document.getElementById('editDialogForm')),
+                                    url: './database/update.php',
+                                    processData: false,
+                                    contentType: false,
+                                    dataType: 'JSON',
+                                    success: function (data) {
+                                        BootstrapDialog.alert({
+                                            type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
+                                            message: data.message,
+                                            callback: function () {
                                                 if (data.success) {
-                                                    BootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_SUCCESS,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
-                                                } else {
-                                                    wBootstrapDialog.alert({
-                                                        type: BootstrapDialog.TYPE_DANGER,
-                                                        message: data.message,
-                                                        callback: function () {
-                                                            location.reload();
-                                                        }
-                                                    });
+                                                    location.reload();
                                                 }
                                             }
                                         });
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
                     });
-                }
+                }, 'json');
+
+            }
         }
 
         var script = new script;

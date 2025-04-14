@@ -8,4 +8,14 @@ $table_columns_mapping = [
     ],
 
 ];
+
+$table_update_columns_mapping = [
+    'UserLoginInformation' => [
+        'first_name', 'last_name', 'email', 'updated_at'
+    ],
+    'products'=> [
+        'product_name', 'description', 'image', 'updated_at'
+    ],
+
+];
 ?>
