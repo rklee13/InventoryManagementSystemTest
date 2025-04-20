@@ -48,6 +48,18 @@ $user = $_SESSION['user'];
                                         <label for="description">Description:</label>
                                         <textarea id="description" name="description" class="appFormInput" placeholder="Enter product description"></textarea>
                                     </div>
+                                    <div class="appFormInputContainer">
+                                        <label for="suppliers">Suppliers:</label>
+                                         <select name="suppliers[]" id="suppliersSelect" class="appFormInput" multiple>
+                                            <?php
+                                            $show_table = 'suppliers';
+                                            $suppliers = include('database/showAll.php');
+                                            foreach($suppliers as $supplier) {
+                                                echo "<option value='".$supplier['id']."'>". $supplier['supplier_name'] ."</option>";
+                                            }
+                                            ?>
+                                         </select>
+                                    </div>
                                     <button type="Submit" class="addUserButton"><i class="fa-solid fa-plus"></i> Add
                                         Product</button>
                                 </form>

@@ -14,7 +14,7 @@ $databaseArray = [];
 $user = $_SESSION['user'];
 foreach ($columns as $column) {
     // Reset the value variable
-    $value=null;
+    $value = null;
 
     if (in_array($column, ['created_at', 'updated_at'])) {
         $value = date('Y-m-d H:i:s');
@@ -27,17 +27,20 @@ foreach ($columns as $column) {
         // Upload/move file to our directory
         $target_directory = "../uploads/products/";
         $file_data = $_FILES[$column];
-        // Give unique file name with timestamp
-        $file_name = 'product-' . time() . '-' . $file_data['name'];
-        // $file_extension = pathinfo($file_name,PATHINFO_EXTENSION); // This will get the file extension
 
-        // Check if image is valid by seeing if we get a valid image size data
-        $check = getimagesize($file_data['tmp_name']);
-        if ($check) {
-            // Move the file
-            if (move_uploaded_file($file_data['tmp_name'], $target_directory . $file_name)) {
-                // Save path to our database
-                $value = $file_name;
+        if ($file_data['tmp_name'] !== '') {
+            // Give unique file name with timestamp
+            $file_name = 'product-' . time() . '-' . $file_data['name'];
+            // $file_extension = pathinfo($file_name,PATHINFO_EXTENSION); // This will get the file extension
+
+            // Check if image is valid by seeing if we get a valid image size data
+            $check = getimagesize($file_data['tmp_name']);
+            if ($check) {
+                // Move the file
+                if (move_uploaded_file($file_data['tmp_name'], $target_directory . $file_name)) {
+                    // Save path to our database
+                    $value = $file_name;
+                }
             }
         }
     } else {
@@ -50,11 +53,32 @@ foreach ($columns as $column) {
 $table_properties = implode(', ', array_keys($databaseArray));
 $table_values = ":" . implode(", :", array_keys($databaseArray));
 
-// Adding the record
+// Adding the record to the main table
 try {
     $insert_query = "INSERT INTO $table_name($table_properties) VALUES ($table_values)";
 
     $connection->prepare($insert_query)->execute($databaseArray);
+
+    // Add suppliers
+    if ($table_name === 'products') {
+        $suppliers = isset($_POST['suppliers']) ? $_POST['suppliers'] : [];
+        if ($suppliers && count($suppliers) > 0) {
+            $productId = $connection->lastInsertId();
+
+            // Loop through the suppliers and add record
+            foreach ($suppliers as $supplier) {
+                $supplier_data = [
+                    'supplier_id' => $supplier,
+                    'product_id' => $productId,
+                    'updated_at' => date("Y-m-d H:i:s"),
+                    'created_at' => date("Y-m-d H:i:s"),
+                ];
+
+                $insert_query = "INSERT INTO productSupplier(supplier, product, created_at, updated_at) VALUES (:supplier_id, :product_id, :created_at, :updated_at)";
+                $connection->prepare($insert_query)->execute($supplier_data);
+            }
+        }
+    }
 
     $response = [
         'success' => true,

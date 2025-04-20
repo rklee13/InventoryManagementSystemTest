@@ -292,6 +292,12 @@ form.appForm {
     margin-top: 20px;
     float: right;
   }
+
+  #suppliersSelect {
+    border-color: #d2d2d2;
+    max-height: 100px;
+    height: 100%;
+  }
 }
 
 div.responseMessage {

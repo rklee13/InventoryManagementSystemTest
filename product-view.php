@@ -6,6 +6,7 @@ if (!isset($_SESSION['user']))
     header("location:login.php");
 
 $_SESSION['table'] = 'products';
+$show_table = 'products';
 $products = include 'database/showAll.php';
 ?>
 
@@ -40,6 +41,7 @@ $products = include 'database/showAll.php';
                                                 <th>Image</th>
                                                 <th>Product Name</th>
                                                 <th>Description</th>
+                                                <th>Suppliers</th>
                                                 <th>Created By</th>
                                                 <th>Created At</th>
                                                 <th>Updated At</th>
@@ -56,6 +58,19 @@ $products = include 'database/showAll.php';
                                                     </td>
                                                     <td id="productName"><?= $product['product_name'] ?></td>
                                                     <td id="description"><?= $product['description'] ?></td>
+                                                    <td id="suppliersList">
+                                                        <?php
+                                                        $productId = $product['id'];
+                                                        $stmt = $connection->prepare("SELECT supplier_name FROM suppliers,productSupplier WHERE productSupplier.product=$productId AND productSupplier.supplier=suppliers.id");
+                                                        $stmt->execute();
+                                                        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                                        $supplier_array = array_column($row, 'supplier_name');
+                                                        $supplier_list = $supplier_array && count($supplier_array) > 0 ?
+                                                            "<ul><li>" . implode("</li><li>", $supplier_array) . "</li></ul>" : "Not Set";
+                                                        echo $supplier_list;
+                                                        ?>
+                                                    </td>
                                                     <td id="createdBy"">
                                                         <?php
                                                         $productId = $product['created_by'];
@@ -106,8 +121,23 @@ $products = include 'database/showAll.php';
         </div>
     </div>
 
-    <?php include('partials/app-scripts.php') ?>
+    <?php
+        include('partials/app-scripts.php');
+
+        $show_table = 'suppliers';
+        $suppliers = include('database/showAll.php');
+        $suppliers_array=[];
+        foreach ($suppliers as $supplier) {
+            $suppliers_array[$supplier['id']]=$supplier['supplier_name'];
+        }
+
+        if ($suppliers_array && count($suppliers_array)>0) {
+            $suppliers_array=json_encode($suppliers_array);
+        }
+    ?>
     <script>
+        var suppliersList = <?= $suppliers_array ?>;
+
         function script() {
             this.initialize = function () {
                 this.registerEvents();
@@ -167,22 +197,37 @@ $products = include 'database/showAll.php';
 
             this.showEditDialog = function (id) {
                 $.get('database/getProduct.php', { id: id }, function (productDetails) {
+                    let currentSuppliers = productDetails['suppliers'];
+                    let suppliersOption = '';
+
+                    for (const [supplierId, supplierName] of Object.entries(suppliersList)) {
+                        let selected = currentSuppliers.includes(parseInt(supplierId)) ? 'selected' : '';
+                        suppliersOption +="<option "+ selected +" value='"+supplierId+"'>"+supplierName+"</option>";
+                    }
+
                     BootstrapDialog.confirm({
                         title: 'Update <strong>' + productDetails.product_name + '</strong>',
                         message: '<form id="editDialogForm" method="POST" class="appForm" enctype="multipart/form-data">\
-                                <input type="hidden" name="id" value="'+id+'"/>\
+                                <input type="hidden" name="id" value="'+ id + '"/>\
                                 <div class="appFormInputContainer">\
-                                <label for="product_name">Product Name:</label>\
-                                <input type="text" id="product_name" name="product_name" class="appFormInput" placeholder="Enter product name" value="'+productDetails.product_name+'"/>\
+                                    <label for="product_name">Product Name:</label>\
+                                    <input type="text" id="product_name" name="product_name" class="appFormInput" placeholder="Enter product name" value="'+ productDetails.product_name + '"/>\
                                 </div>\
                                 <div class="appFormInputContainer">\
-                                <label for="product_image">Product Image:</label>\
-                                <input type="file" id="product_image" name="image" value="'+productDetails.image+'"/>\
+                                    <label for="product_image">Product Image:</label>\
+                                    <input type="file" id="product_image" name="image" value="'+ productDetails.image + '"/>\
                                 </div>\
                                 <div class="appFormInputContainer">\
-                                <label for="description">Description:</label>\
-                                <textarea id="description" name="description" class="appFormInput" placeholder="Enter product description">'+productDetails.description+'</textarea>\
-                                </div></form>\
+                                    <label for="description">Description:</label>\
+                                    <textarea id="description" name="description" class="appFormInput" placeholder="Enter product description">'+ productDetails.description + '</textarea>\
+                                </div>\
+                                <div class="appFormInputContainer">\
+                                        <label for="suppliers">Suppliers:</label>\
+                                         <select name="suppliers[]" id="suppliersSelect" class="appFormInput" multiple>\
+                                         '+ suppliersOption +'\
+                                         </select>\
+                                    </div>\
+                                </form>\
                                 ',
                         callback: function (isUpdate) {
                             if (isUpdate) { // if user clicked "Ok" button
