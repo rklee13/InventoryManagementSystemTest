@@ -19,7 +19,7 @@ $user = $_SESSION['user'];
                     <span class="menuText showHideSubMenu">Product Management</span>
                     <i class="fa-solid fa-chevron-left mainMenuChevron showHideSubMenu"></i>
                 </a>
-                <ul id="supplierSubMenus" class="subMenus">
+                <ul id="productSubMenus" class="subMenus">
                     <li>
                         <a class="subMenuLink" href="./product-view.php"><i class="fa-regular fa-circle"></i> View Product</a>
                     </li>
@@ -36,10 +36,10 @@ $user = $_SESSION['user'];
                 </a>
                 <ul id="supplierSubMenus" class="subMenus">
                     <li>
-                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> View Supplier</a>
+                        <a class="subMenuLink" href="./supplier-view.php"><i class="fa-regular fa-circle"></i> View Supplier</a>
                     </li>
                     <li>
-                        <a class="subMenuLink" href="#"><i class="fa-regular fa-circle"></i> Add Supplier</a>
+                        <a class="subMenuLink" href="./supplier-add.php"><i class="fa-regular fa-circle"></i> Add Supplier</a>
                     </li>
                 </ul>
             </li>

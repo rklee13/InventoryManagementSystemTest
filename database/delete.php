@@ -10,6 +10,16 @@ $name=$_POST['name'];
 try {
     $table_name = $_SESSION['table'];
 
+    // Delete junction table
+    if ($table_name === 'suppliers') {
+        $delete_junction_query = "DELETE FROM productSupplier WHERE supplier=$id";
+        $connection->exec($delete_junction_query);
+    } else if ($table_name === 'products') {
+        $delete_junction_query = "DELETE FROM productSupplier WHERE product=$id";
+        $connection->exec($delete_junction_query);
+    }
+
+    // Delete main table
     $delete_query = "DELETE FROM $table_name WHERE id=$id";
     $connection->exec($delete_query);
 

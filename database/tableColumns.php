@@ -6,7 +6,9 @@ $table_columns_mapping = [
     'products'=> [
         'product_name', 'description', 'image', 'created_by', 'created_at', 'updated_at'
     ],
-
+    'suppliers'=> [
+        'supplier_name', 'supplier_location', 'email', 'created_by', 'created_at', 'updated_at'
+    ],
 ];
 
 $table_update_columns_mapping = [
@@ -16,6 +18,8 @@ $table_update_columns_mapping = [
     'products'=> [
         'product_name', 'description', 'image', 'updated_at'
     ],
-
+    'suppliers'=> [
+        'supplier_name', 'supplier_location', 'email'
+    ],
 ];
 ?>

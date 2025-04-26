@@ -59,7 +59,7 @@ try {
 
     $connection->prepare($insert_query)->execute($databaseArray);
 
-    // Add suppliers
+    // Add suppliers for the product
     if ($table_name === 'products') {
         $suppliers = isset($_POST['suppliers']) ? $_POST['suppliers'] : [];
         if ($suppliers && count($suppliers) > 0) {
