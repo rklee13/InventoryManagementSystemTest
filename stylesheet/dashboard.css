@@ -316,7 +316,7 @@ div.responseMessage {
 }
 
 /*  User Add Page */
-div.row {
+div.rowInfo {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -384,4 +384,64 @@ td {
 .productImages {
   width: 100px;
   height: 100px;
+}
+
+.orderButton {
+  height: 33px; 
+  border: none;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.orderProductsButton {  
+  background: #d93f65;  
+  color: #fff;
+}
+
+.submitOrderProductsButton {
+  background: #323232;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.marginTop20 {
+  margin-top: 20px;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+#orderProductLists {
+  margin-top: 20px; 
+
+  div.orderProductRow {
+    padding: 6px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 25px;
+  }
+
+  .suppliersRows {
+    .rowInfo {
+      padding: 8px 0px;
+    }
+
+    .supplierRowName {
+      margin-left: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      color: #a1a1a1;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.productNameSelect {
+  font-size: 15px;
+  border: none;
+  background: #fafafa;
+  padding: 3px 17px;
+  border: 1px solid #b0b0b0;
+  border-radius: 2px;
 }

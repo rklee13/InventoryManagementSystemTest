@@ -29,7 +29,7 @@ $products = include 'database/showAll.php';
             <!-- Main content section -->
             <div class="dashboardContent">
                 <div class="dashboardContentMain">
-                    <div class="row">
+                    <div class="rowInfo">
                         <div class="column column-12">
                             <h1><i class="fa-solid fa-users"></i> List of Current Products</h1>
                             <div class="userListContent">

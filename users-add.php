@@ -29,7 +29,7 @@ $_SESSION['redirect_to'] = 'users-add.php';
             <!-- Main content section -->
             <div class="dashboardContent">
                 <div class="dashboardContentMain">
-                    <div class="row">
+                    <div class="rowInfo">
                         <div class="column column-12">
                             <h1><i class="fa-solid fa-user-plus"></i> Create User</h1>
                             <div id="userAddFormContainer">

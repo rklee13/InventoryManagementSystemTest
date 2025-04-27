@@ -26,6 +26,9 @@ $user = $_SESSION['user'];
                     <li>
                         <a class="subMenuLink" href="./product-add.php"><i class="fa-regular fa-circle"></i> Add Product</a>
                     </li>
+                    <li>
+                        <a class="subMenuLink" href="./product-order.php"><i class="fa-regular fa-circle"></i> Order Product</a>
+                    </li>
                 </ul>
             </li>
             <li class="listMainMenuItem">
