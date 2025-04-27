@@ -16,7 +16,7 @@ foreach ($columns as $column) {
     // Reset the value variable
     $value = NULL;
 
-    if (in_array($column, ['product_name', 'first_name'])) {
+    if (in_array($column, ['product_name', 'first_name', 'supplier_name'])) {
         $name = $_POST[$column];
     }
     if ($column == 'updated_at') {
@@ -79,6 +79,28 @@ try {
 
                 $insert_query = "INSERT INTO productSupplier(supplier, product, created_at, updated_at) VALUES (:supplier_id, :product_id, :created_at, :updated_at)";
                 $connection->prepare($insert_query)->execute($supplier_data);
+            }
+        }
+    } else if ($table_name === 'suppliers') {
+        // Delete old values
+        $delete_query = "DELETE FROM productSupplier WHERE supplier=$id";
+        $connection->exec($delete_query);
+
+        // Get products if it exist
+        $products = isset($_POST['products']) ? $_POST['products'] : [];
+
+        // Loop through the products and add record
+        if ($products && count($products) > 0) {
+            foreach ($products as $product) {
+                $product_data = [
+                    'supplier_id' => $id,
+                    'product_id' => $product,
+                    'updated_at' => date("Y-m-d H:i:s"),
+                    'created_at' => date("Y-m-d H:i:s"),
+                ];
+
+                $insert_query = "INSERT INTO productSupplier(supplier, product, created_at, updated_at) VALUES (:supplier_id, :product_id, :created_at, :updated_at)";
+                $connection->prepare($insert_query)->execute($product_data);
             }
         }
     }

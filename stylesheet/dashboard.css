@@ -293,7 +293,7 @@ form.appForm {
     float: right;
   }
 
-  #suppliersSelect {
+  #suppliersSelect, #productsSelect {
     border-color: #d2d2d2;
     max-height: 100px;
     height: 100%;

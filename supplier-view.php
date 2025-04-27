@@ -66,8 +66,8 @@ $suppliers = include 'database/showAll.php';
                                                             $product_list = $product_array && count($product_array) > 0 ?
                                                                 "<ul><li>" . implode("</li><li>", $product_array) . "</li></ul>" : "Not Set";
                                                             echo $product_list;
-                                                            ?>
-                                                        </td>
+                                                        ?>
+                                                    </td>
                                                     <td id="createdBy"">
                                                         <?php
                                                         $userId = $supplier['created_by'];
@@ -121,19 +121,19 @@ $suppliers = include 'database/showAll.php';
     <?php
         include('partials/app-scripts.php');
 
-        $show_table = 'suppliers';
-        $suppliers = include('database/showAll.php');
-        $suppliers_array=[];
-        foreach ($suppliers as $supplier) {
-            $suppliers_array[$supplier['id']]=$supplier['supplier_name'];
+        $show_table = 'products';
+        $products = include('database/showAll.php');
+        $products_array=[];
+        foreach ($products as $product) {
+            $products_array[$product['id']]=$product['product_name'];
         }
 
-        if ($suppliers_array && count($suppliers_array)>0) {
-            $suppliers_array=json_encode($suppliers_array);
+        if ($products_array && count($products_array)>0) {
+            $products_array=json_encode($products_array);
         }
     ?>
     <script>
-        var suppliersList = <?= $suppliers_array ?>;
+        var productsList = <?= $products_array ?>;
 
         function script() {
             this.initialize = function () {
@@ -193,13 +193,13 @@ $suppliers = include 'database/showAll.php';
             }
 
             this.showEditDialog = function (id) {
-                $.get('database/getProduct.php', { id: id }, function (supplierDetails) {
-                    let currentSuppliers = productDetails['suppliers'];
-                    let suppliersOption = '';
+                $.get('database/getSupplier.php', { id: id }, function (supplierDetails) {
+                    let currentProducts = supplierDetails['products'];
+                    let productsOption = '';
 
-                    for (const [supplierId, supplierName] of Object.entries(suppliersList)) {
-                        let selected = currentSuppliers.includes(parseInt(supplierId)) ? 'selected' : '';
-                        suppliersOption +="<option "+ selected +" value='"+supplierId+"'>"+supplierName+"</option>";
+                    for (const [productId, productName] of Object.entries(productsList)) {
+                        let selected = currentProducts.includes(parseInt(productId)) ? 'selected' : '';
+                        productsOption +="<option "+ selected +" value='"+productId+"'>"+productName+"</option>";
                     }
 
                     BootstrapDialog.confirm({
@@ -207,16 +207,22 @@ $suppliers = include 'database/showAll.php';
                         message: '<form id="editDialogForm" method="POST" class="appForm" enctype="multipart/form-data">\
                                 <input type="hidden" name="id" value="'+ id + '"/>\
                                 <div class="appFormInputContainer">\
-                                    <label for="supplier_name">Product Name:</label>\
+                                    <label for="supplier_name">Supplier Name:</label>\
                                     <input type="text" id="supplier_name" name="supplier_name" class="appFormInput" placeholder="Enter supplier name" value="'+ supplierDetails.supplier_name + '"/>\
                                 </div>\
                                 <div class="appFormInputContainer">\
-                                    <label for="supplier_location">Product Name:</label>\
+                                    <label for="supplier_location">Supplier Location:</label>\
                                     <input type="text" id="supplier_location" name="supplier_location" class="appFormInput" placeholder="Enter supplier location" value="'+ supplierDetails.supplier_location + '"/>\
                                 </div>\
                                 <div class="appFormInputContainer">\
-                                    <label for="supplier_email">Description:</label>\
+                                    <label for="supplier_email">Email:</label>\
                                     <input type="email" id="supplier_email" name="email" class="appFormInput" placeholder="Enter supplier email" value="'+ supplierDetails.email + '"/>\
+                                </div>\
+                                <div class="appFormInputContainer">\
+                                    <label for="productsSelect">Products:</label>\
+                                    <select name="products[]" id="productsSelect" class="appFormInput" multiple>\
+                                        '+ productsOption +'\
+                                    </select>\
                                 </div>\
                                 </form>\
                                 ',
