@@ -102,6 +102,12 @@ textarea:not([rows]) {
   font-family: Arial;
 }
 
+.button {
+  border: none;
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+
 div.dashboardSidebar {
   width: 20%;
   /* This and dashboardContentContainer's width should equal 100% */
@@ -418,8 +424,15 @@ td {
 
   div.orderProductRow {
     padding: 6px;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
     padding-bottom: 25px;
+    padding-top: 25px;
+  }
+
+  .orderRemoveButton {
+    background: #ff5858;
+    color: #fff;
+    float: right;
   }
 
   .suppliersRows {
@@ -433,6 +446,15 @@ td {
       font-weight: bold;
       color: #a1a1a1;
       text-transform: uppercase;
+    }
+
+    .orderProductQty {
+      height: 33px;
+      border: none;
+      background: #f8f8f8;
+      text-indent: 10px;
+      border: 1px solid #d6d6d6;
+      border-radius: 2px;
     }
   }
 }

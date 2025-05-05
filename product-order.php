@@ -34,76 +34,21 @@ $products = json_encode($products);
                         <div class="column column-12">
                             <h1><i class="fa-solid fa-user-plus"></i> Order Product</h1>
                             <div id="userAddFormContainer">
-                                <!-- enctype=multipart/form-data is needed for input of type files  -->
-                                <!-- <form action="" method="POST" class="appForm">
-                                     <div class="appFormInputContainer">
-                                        <label for="product_name">Product Name:</label>
-                                        <input type="text" id="product_name" name="product_name" class="appFormInput" placeholder="Select product"/>
-                                    </div>
-                                    <div class="appFormInputContainer">
-                                        <label for="supplier_name">Supplier Name:</label>
-                                        <input type="text" id="supplier_name" name="supplier" class="appFormInput" placeholder="Select supplier"/>
-                                    </div>
-                                    <div class="appFormInputContainer">
-                                        <label for="quantity_order">Quantity Order:</label>
-                                        <input type="text" id="quantity_order" name="quantity_order" class="appFormInput" placeholder="Enter Quantity"/>
-                                    </div>
-                                    <div class="appFormInputContainer">
-                                        <label for="suppliers">Suppliers:</label>
-                                         <select name="suppliers[]" id="suppliersSelect" class="appFormInput" multiple>
-                                         <?php
-                                         $show_table = 'suppliers';
-                                         $suppliers = include('database/showAll.php');
-                                         foreach ($suppliers as $supplier) {
-                                             echo "<option value='" . $supplier['id'] . "'>" . $supplier['supplier_name'] . "</option>";
-                                         }
-                                         ?>
-                                         </select>
-                                    </div>
-                                    <button type="Submit" class="addUserButton"><i class="fa-solid fa-plus"></i> Add New Product Order</button>
-                                </form> -->
                                 <div>
                                     <div class="alignRight">
-                                        <button class="orderButton orderProductsButton">Order Product</button>
+                                        <button id="orderProductsButton" class="orderButton orderProductsButton">Add
+                                            Another Product</button>
                                     </div>
                                     <div id="orderProductLists">
-                                        <div class="orderProductRow">
+                                        <!-- <div class="orderProductRow">
                                             <div>
                                                 <label for="product_name">PRODUCT NAME: </label>
-                                                <select id="product_name" name="product_name">
-                                                    <option value="">Product 1</option>
-                                                </select>
+                                                <select id="product_name" name="product_name"></select>
                                             </div>
-
-                                            <div class="suppliersRows">
-                                                <div class="rowInfo">
-                                                    <div style="width: 50%;">
-                                                        <p class="supplierRowName">Supplier 1</p>
-                                                        <!-- <label for="supplier_name">Supplier Name:</label>
-                                                        <select id="supplier_name" name="supplier"
-                                                            class="productNameSelect"></select> -->
-                                                    </div>
-                                                    <div style="width: 50%;">
-                                                        <label for="quantityOrder">Quantity: </label>
-                                                        <input type="number" id="quantityOrder" name="quantity_ordered"
-                                                            class="appFormInput" placeholder="Enter quantity" />
-                                                    </div>
-                                                </div>
-                                                <div class="rowInfo">
-                                                    <div style="width: 50%;">
-                                                        <p class="supplierRowName">Supplier 2</p>
-                                                    </div>
-                                                    <div style="width: 50%;">
-                                                        <label for="quantityOrder">Quantity: </label>
-                                                        <input type="number" id="quantityOrder" name="quantity_ordered"
-                                                            class="appFormInput" placeholder="Enter quantity" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                     <div class="alignRight marginTop20">
-                                        <button class="orderButton submitOrderProductsButton">Submit Order</button>
+                                        <button id="submitOrderProductsButton" class="orderButton submitOrderProductsButton">Submit Order</button>
                                     </div>
                                 </div>
                             </div>
@@ -116,7 +61,144 @@ $products = json_encode($products);
     <?php include('partials/app-scripts.php') ?>
     <script>
         var products = <?= $products ?>;
+        var counter=0;
 
+        function script() {
+            var vm=this;
+
+            let productOptions='\
+                <div>\
+                    <label for="product_name_select">PRODUCT NAME: </label>\
+                    <select id="product_name_select" name="product_name">\
+                        <option value="">Select Product</option>\
+                        INSERTPRODUCTHERE\
+                    </select>\
+                    <button id="orderRemoveButton" class="button orderRemoveButton"> Remove</button>\
+                </div>';
+
+            this.initialize = function () {
+                this.registerEvents();
+                this.renderProductOptions();
+            }
+
+            this.getSupplierRowId=function(count) {
+                return 'suppliersRow_'+count;
+            }
+
+            this.renderProductOptions=function() {
+                let optionHtml ='';
+                
+                products.forEach((product) => {
+                    optionHtml+='<option value="'+product.id+'">'+product.product_name+'</option>';
+                    //selectId.options.add(new Option(product.product_name,product.id));
+                });
+
+                // Append to container
+                productOptions=productOptions.replace('INSERTPRODUCTHERE',optionHtml);
+            }
+
+            this.renderSupplierRow=function(supplierDetails,counterId) {
+                let supplierRows = '';
+
+                console.log(supplierDetails);
+
+                supplierDetails.forEach((supplier)=> {
+                    supplierRows+= '\
+                        <div class="suppliersRows">\
+                            <div class="rowInfo">\
+                                <div style="width: 50%;">\
+                                    <p class="supplierRowName">'+supplier.supplier_name+'</p>\
+                                </div>\
+                                <div style="width: 50%;">\
+                                    <label for="quantityOrder">Quantity: </label>\
+                                    <input type="number" id="quantityOrder" name="quantity_ordered" class="appFormInput orderProductQty" placeholder="Enter quantity" />\
+                                </div>\
+                            </div>\
+                        </div>';
+                });
+
+                // Append to container
+                let supplierRowContainer=document.getElementById(this.getSupplierRowId(counterId));
+                supplierRowContainer.innerHTML=supplierRows;   
+            }
+
+            this.registerEvents = function () {
+
+                document.addEventListener('click', function (e) {
+                    const targetElement = e.target;
+                    const targetElementId = targetElement.id;
+                    
+                    // Add a new product order event
+                    if (targetElementId === 'orderProductsButton') {
+                        //e.preventDefault(); // This prevents the automatic page refresh from the <a> element
+
+                        let orderProductListsContainer=document.getElementById('orderProductLists');
+                        if (orderProductListsContainer) {
+                            counter++;
+                            const supplierRowId=vm.getSupplierRowId(counter);
+                            
+                            // Create and append rows to not clear out values when we add a new row
+                            // Create the outer div container
+                            const divContainerElement = document.createElement('div')
+                            divContainerElement.className='orderProductRow';
+                            divContainerElement.innerHTML=productOptions;
+
+                            // Create the inner div for the supplier row
+                            const divSupplierRowElement=document.createElement('div');
+                            divSupplierRowElement.id=vm.getSupplierRowId(counter);
+                            divSupplierRowElement.dataset.counter=counter;
+                            divSupplierRowElement.className='suppliersRows';
+                            divContainerElement.appendChild(divSupplierRowElement);
+                            orderProductListsContainer.appendChild(divContainerElement);
+
+                            // const supplierRowHtml='\
+                            //     <div class="orderProductRow">\
+                            //         '+productOptions+'\
+                            //         <div class="suppliersRows" id="'+supplierRowId+'" data-counter="'+counter+'"></div>\
+                            //     </div>';
+                            // orderProductListsContainter.innerHTML += '\
+                            //     <div class="orderProductRow">\
+                            //         '+productOptions+'\
+                            //         <div class="suppliersRows" id="'+supplierRowId+'" data-counter="'+counter+'"></div>\
+                            //     </div>';
+                        }
+                        
+                    } else if (targetElementId === 'orderRemoveButton') {
+                        //e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
+                        let orderRow = targetElement.closest('div.orderProductRow');
+
+                        // Remove the element
+                        orderRow.remove();
+
+                    } else if (targetElementId === 'submitOrderProductsButton') {
+                        //e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
+                    }
+                });
+
+                document.addEventListener('change', function (e) {
+                    const targetElement = e.target;
+                    const targetElementId = targetElement.id;
+                    
+                    // Add supplier rows on product option change
+                    if (targetElementId === 'product_name_select') {
+                        //e.preventDefault(); // This prevents the automatic page refresh from the <a> element
+
+                        let productId = targetElement.value;
+                        let counterId = targetElement.closest('div.orderProductRow').querySelector('.suppliersRows').dataset.counter;
+
+                        if (productId.length > 0) {
+                            $.get('database/getSupplierFromProduct.php', { id: productId }, function (supplierDetails) {
+                                vm.renderSupplierRow(supplierDetails,counterId);
+                            }, 'json');
+                        } else {
+                            vm.renderSupplierRow([],counterId);
+                        }
+                    }
+                });
+            }
+        }
+
+        (new script()).initialize();
     </script>
 </body>
 
