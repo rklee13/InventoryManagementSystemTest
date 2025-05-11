@@ -26,9 +26,6 @@ $user = $_SESSION['user'];
                     <li>
                         <a class="subMenuLink" href="./product-add.php"><i class="fa-regular fa-circle"></i> Add Product</a>
                     </li>
-                    <li>
-                        <a class="subMenuLink" href="./product-order.php"><i class="fa-regular fa-circle"></i> Order Product</a>
-                    </li>
                 </ul>
             </li>
             <li class="listMainMenuItem">
@@ -43,6 +40,21 @@ $user = $_SESSION['user'];
                     </li>
                     <li>
                         <a class="subMenuLink" href="./supplier-add.php"><i class="fa-regular fa-circle"></i> Add Supplier</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="listMainMenuItem">
+                <a href="javascript:void(0)" class="showHideSubMenu">
+                    <i class="fa-solid fa-shopping-cart"></i>
+                    <span class="menuText showHideSubMenu">Order Management</span>
+                    <i class="fa-solid fa-chevron-left mainMenuChevron showHideSubMenu"></i>
+                </a>
+                <ul id="supplierSubMenus" class="subMenus">
+                    <li>
+                        <a class="subMenuLink" href="./product-order.php"><i class="fa-regular fa-circle"></i> Create Order</a>
+                    </li>
+                    <li>
+                        <a class="subMenuLink" href="./order-view.php"><i class="fa-regular fa-circle"></i> View Orders</a>
                     </li>
                 </ul>
             </li>

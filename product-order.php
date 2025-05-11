@@ -34,12 +34,15 @@ $products = json_encode($products);
                         <div class="column column-12">
                             <h1><i class="fa-solid fa-user-plus"></i> Order Product</h1>
                             <div id="userAddFormContainer">
-                                <div>
+                                <form action="database/saveOrder.php" method="POST">
                                     <div class="alignRight">
-                                        <button id="orderProductsButton" class="orderButton orderProductsButton">Add
+                                        <!-- Only type submit should trigger the form action -->
+                                        <button type="button" id="orderProductsButton"
+                                            class="orderButton orderProductsButton">Add
                                             Another Product</button>
                                     </div>
                                     <div id="orderProductLists">
+                                        <p id="noProductData" style="color: #9f9f9f;">No products selected.</p>
                                         <!-- <div class="orderProductRow">
                                             <div>
                                                 <label for="product_name">PRODUCT NAME: </label>
@@ -48,10 +51,23 @@ $products = json_encode($products);
                                         </div> -->
                                     </div>
                                     <div class="alignRight marginTop20">
-                                        <button id="submitOrderProductsButton" class="orderButton submitOrderProductsButton">Submit Order</button>
+                                        <button type="submit" id="submitOrderProductsButton"
+                                            class="orderButton submitOrderProductsButton">Submit Order</button>
                                     </div>
-                                </div>
+                                </form>
                             </div>
+                            <?php
+                            if (isset($_SESSION['response'])) {
+                                $response_message = $_SESSION['response']['message'];
+                                $is_success = $_SESSION['response']['success'];
+                                ?>
+                                <div class="responseMessage">
+                                    <p class="<?= $is_success ? 'responseMessageSuccess' : 'responseMessageFailure' ?>">
+                                        <?= $response_message ?>
+                                    </p>
+                                </div>
+                                <?php unset($_SESSION['response']);
+                            } ?>
                         </div>
                     </div>
                 </div>
@@ -61,15 +77,15 @@ $products = json_encode($products);
     <?php include('partials/app-scripts.php') ?>
     <script>
         var products = <?= $products ?>;
-        var counter=0;
+        var counter = 0;
 
         function script() {
-            var vm=this;
+            var vm = this;
 
-            let productOptions='\
+            let productOptions = '\
                 <div>\
                     <label for="product_name_select">PRODUCT NAME: </label>\
-                    <select id="product_name_select" name="product_name">\
+                    <select id="product_name_select" name="products[]">\
                         <option value="">Select Product</option>\
                         INSERTPRODUCTHERE\
                     </select>\
@@ -81,45 +97,43 @@ $products = json_encode($products);
                 this.renderProductOptions();
             }
 
-            this.getSupplierRowId=function(count) {
-                return 'suppliersRow_'+count;
+            this.getSupplierRowId = function (count) {
+                return 'suppliersRow_' + count;
             }
 
-            this.renderProductOptions=function() {
-                let optionHtml ='';
-                
+            this.renderProductOptions = function () {
+                let optionHtml = '';
+
                 products.forEach((product) => {
-                    optionHtml+='<option value="'+product.id+'">'+product.product_name+'</option>';
+                    optionHtml += '<option value="' + product.id + '">' + product.product_name + '</option>';
                     //selectId.options.add(new Option(product.product_name,product.id));
                 });
 
                 // Append to container
-                productOptions=productOptions.replace('INSERTPRODUCTHERE',optionHtml);
+                productOptions = productOptions.replace('INSERTPRODUCTHERE', optionHtml);
             }
 
-            this.renderSupplierRow=function(supplierDetails,counterId) {
+            this.renderSupplierRow = function (supplierDetails, counterId, productId) {
                 let supplierRows = '';
 
-                console.log(supplierDetails);
-
-                supplierDetails.forEach((supplier)=> {
-                    supplierRows+= '\
+                supplierDetails.forEach((supplier) => {
+                    supplierRows += '\
                         <div class="suppliersRows">\
                             <div class="rowInfo">\
                                 <div style="width: 50%;">\
-                                    <p class="supplierRowName">'+supplier.supplier_name+'</p>\
+                                    <p class="supplierRowName">'+ supplier.supplier_name + '</p>\
                                 </div>\
                                 <div style="width: 50%;">\
                                     <label for="quantityOrder">Quantity: </label>\
-                                    <input type="number" id="quantityOrder" name="quantity_ordered" class="appFormInput orderProductQty" placeholder="Enter quantity" />\
+                                    <input type="number" id="quantityOrder" name="quantity['+ productId + '][' + supplier.id + ']" class="appFormInput orderProductQty" placeholder="Enter quantity" />\
                                 </div>\
                             </div>\
                         </div>';
                 });
 
                 // Append to container
-                let supplierRowContainer=document.getElementById(this.getSupplierRowId(counterId));
-                supplierRowContainer.innerHTML=supplierRows;   
+                let supplierRowContainer = document.getElementById(this.getSupplierRowId(counterId));
+                supplierRowContainer.innerHTML = supplierRows;
             }
 
             this.registerEvents = function () {
@@ -127,27 +141,29 @@ $products = json_encode($products);
                 document.addEventListener('click', function (e) {
                     const targetElement = e.target;
                     const targetElementId = targetElement.id;
-                    
+
                     // Add a new product order event
                     if (targetElementId === 'orderProductsButton') {
                         //e.preventDefault(); // This prevents the automatic page refresh from the <a> element
 
-                        let orderProductListsContainer=document.getElementById('orderProductLists');
+                        let orderProductListsContainer = document.getElementById('orderProductLists');
                         if (orderProductListsContainer) {
+                            document.getElementById('noProductData').style.display='none';
+
                             counter++;
-                            const supplierRowId=vm.getSupplierRowId(counter);
-                            
+                            const supplierRowId = vm.getSupplierRowId(counter);
+
                             // Create and append rows to not clear out values when we add a new row
                             // Create the outer div container
                             const divContainerElement = document.createElement('div')
-                            divContainerElement.className='orderProductRow';
-                            divContainerElement.innerHTML=productOptions;
+                            divContainerElement.className = 'orderProductRow';
+                            divContainerElement.innerHTML = productOptions;
 
                             // Create the inner div for the supplier row
-                            const divSupplierRowElement=document.createElement('div');
-                            divSupplierRowElement.id=vm.getSupplierRowId(counter);
-                            divSupplierRowElement.dataset.counter=counter;
-                            divSupplierRowElement.className='suppliersRows';
+                            const divSupplierRowElement = document.createElement('div');
+                            divSupplierRowElement.id = vm.getSupplierRowId(counter);
+                            divSupplierRowElement.dataset.counter = counter;
+                            divSupplierRowElement.className = 'suppliersRows';
                             divContainerElement.appendChild(divSupplierRowElement);
                             orderProductListsContainer.appendChild(divContainerElement);
 
@@ -162,13 +178,20 @@ $products = json_encode($products);
                             //         <div class="suppliersRows" id="'+supplierRowId+'" data-counter="'+counter+'"></div>\
                             //     </div>';
                         }
-                        
+
                     } else if (targetElementId === 'orderRemoveButton') {
                         //e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
                         let orderRow = targetElement.closest('div.orderProductRow');
 
                         // Remove the element
                         orderRow.remove();
+                        
+                        // Show the default string
+                        let orderProductListsContainer = document.getElementById('orderProductLists');
+                        if (orderProductListsContainer && orderProductListsContainer.getElementsByClassName('orderProductRow').length === 0) {
+                            document.getElementById('noProductData').style.display='';
+                            console.log(document.getElementById('noProductData').style.display);
+                        }
 
                     } else if (targetElementId === 'submitOrderProductsButton') {
                         //e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
@@ -178,7 +201,7 @@ $products = json_encode($products);
                 document.addEventListener('change', function (e) {
                     const targetElement = e.target;
                     const targetElementId = targetElement.id;
-                    
+
                     // Add supplier rows on product option change
                     if (targetElementId === 'product_name_select') {
                         //e.preventDefault(); // This prevents the automatic page refresh from the <a> element
@@ -188,10 +211,10 @@ $products = json_encode($products);
 
                         if (productId.length > 0) {
                             $.get('database/getSupplierFromProduct.php', { id: productId }, function (supplierDetails) {
-                                vm.renderSupplierRow(supplierDetails,counterId);
+                                vm.renderSupplierRow(supplierDetails, counterId, productId);
                             }, 'json');
                         } else {
-                            vm.renderSupplierRow([],counterId);
+                            vm.renderSupplierRow([], counterId);
                         }
                     }
                 });
