@@ -17,7 +17,7 @@ try {
                 'supplier' => $supplierId,
                 'product' => $productId,
                 'quantity_ordered' => $quantity,
-                'status' => 'ORDERPLACED',
+                'status' => 'PENDING',
                 'batch' => $batch,
                 'created_by' => $user['id'],
                 'created_at' => date('Y-m-d H:i:s'),

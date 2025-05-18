@@ -5,9 +5,9 @@ session_start();
 if (!isset($_SESSION['user']))
     header("location:login.php");
 
-$_SESSION['table'] = 'suppliers';
-$show_table = 'suppliers';
-$suppliers = include 'database/showAll.php';
+$_SESSION['table'] = 'product_order';
+$show_table = 'product_order';
+$product_orders_all = include 'database/showAll.php';
 ?>
 
 <!DOCTYPE html>
@@ -34,38 +34,61 @@ $suppliers = include 'database/showAll.php';
                             <h1><i class="fa-solid fa-users"></i> List of Purchased Orders</h1>
                             <div class="userListContent">
                                 <div class="poListContainers">
-                                    <div class="poList">
-                                        <p>Batch #: 4646</p>
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Product</th>
-                                                    <th>Quantity Ordered</th>
-                                                    <th>Supplier</th>
-                                                    <th>Status</th>
-                                                    <th>Ordered By</th>
-                                                    <th>Created Date</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Product</td>
-                                                    <td>Quantity Ordered</td>
-                                                    <td>Supplier</td>
-                                                    <td>Status</td>
-                                                    <td>Ordered By</td>
-                                                    <td>Created Date</td>
-                                                    <td>Action</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="poOrderButtonContainer alignRight">
-                                            <button class="button updatePoButton">Update</button>
+                                    <?php 
+                                        $stmt = $connection->prepare("SELECT product_order.id, products.product_name, product_order.quantity_ordered, suppliers.supplier_name, product_order.status, 
+                                            product_order.batch, UserLoginInformation.first_name, UserLoginInformation.last_name, product_order.quantity_received, product_order.created_at 
+                                            FROM product_order, suppliers, products, UserLoginInformation 
+                                            WHERE product_order.supplier = suppliers.id AND product_order.product = products.id AND product_order.created_by = UserLoginInformation.id
+                                            ORDER BY product_order.created_at DESC");
+
+                                        $stmt->execute();
+                                        $purchase_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                        $data=[];
+                                        foreach($purchase_orders as $order) {
+                                            $data[$order['batch']][]=$order;
+                                        }
+                                    ?>
+
+                                    <?php foreach ($data as $batchId => $product_orders): ?>
+                                        <div class="poList" id="<?= $batchId ?>">
+                                            <p>Batch #: <?= $batchId ?></p>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Product</th>
+                                                        <th>Quantity Ordered</th>
+                                                        <th>Quantity Received</th>
+                                                        <th>Supplier</th>
+                                                        <th>Status</th>
+                                                        <th>Ordered By</th>
+                                                        <th>Created Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($product_orders as $index=>$product_order): ?>
+                                                        <tr>
+                                                            <td><?= $index+1 ?></td>
+                                                            <td id="po_product"><?= $product_order['product_name'] ?></td>
+                                                            <td id="po_qty_ordered"><?= $product_order['quantity_ordered'] ?></td>
+                                                            <td id="po_qty_received"><?= $product_order['quantity_received'] ?></td>
+                                                            <td id="po_supplier"><?= $product_order['supplier_name'] ?></td>
+                                                            <td><span id="po_status" class="productOrder_badge productOrder_badge_<?= $product_order['status'] ?>"><?= $product_order['status'] ?></span></td>
+                                                            <td><?= $product_order['first_name'] . ' ' . $product_order['last_name']?></td>
+                                                            <td>
+                                                                <?= date('M d, Y h:i:s A e', strtotime($product_order['created_at'])) ?>
+                                                                <input type="hidden" id="po_row_id" value="<?= $product_order['id']?>">
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach ?>
+                                                </tbody>
+                                            </table>
+                                            <div class="poOrderButtonContainer alignRight">
+                                                <button id="updatePoButton" class="button updatePoButton" data-id="<?= $batchId ?>">Update</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php endforeach ?>
                                 </div>
                             </div>
                         </div>
@@ -99,6 +122,121 @@ $suppliers = include 'database/showAll.php';
             var vm = this;
 
             this.registerEvents = function () {
+                document.addEventListener('click', function (e) {
+                    const targetElement = e.target;
+                    const targetElememtId = targetElement.id;
+
+                    if (targetElememtId === 'updatePoButton') {
+                        e.preventDefault(); // This prevents the automatic page refresh from the <a> element
+
+                        const batchId = targetElement.dataset.id;
+
+                        // Get all purchased order product records
+                        const tableRows = document.getElementById(batchId).querySelector('tbody').querySelectorAll('tr');
+                        
+                        let poListsArr=[];
+                        tableRows.forEach((row,key) => {
+                            const productName=row.querySelector('#po_product').textContent;
+                            const quantity_ordered=row.querySelector('#po_qty_ordered').textContent;
+                            const quantity_received=row.querySelector('#po_qty_received').textContent;
+                            const supplierName=row.querySelector('#po_supplier').textContent;
+                            const status=row.querySelector('#po_status').textContent;
+                            const productOrder_id =row.querySelector('#po_row_id').value;
+
+                            poListsArr.push({
+                                name:productName,
+                                qtyOrdered: quantity_ordered,
+                                qtyReceived: quantity_received,
+                                supplier: supplierName,
+                                status: status,
+                                id:productOrder_id,
+                            });
+                        });
+
+                        // Store in html
+                        let poListHtml = '<table id="formTable_'+batchId+'">\
+                                                <thead>\
+                                                    <tr>\
+                                                        <th>Product</th>\
+                                                        <th>Quantity Ordered</th>\
+                                                        <th>Quantity Received</th>\
+                                                        <th>Supplier</th>\
+                                                        <th>Status</th>\
+                                                    </tr>\
+                                                </thead>\
+                                                <tbody>';
+                        
+                        poListsArr.forEach(poData => {
+                            poListHtml+='\
+                                        <tr>\
+                                            <td id="po_product">'+ poData.name +'</td>\
+                                            <td id="po_qty_ordered">'+ poData.qtyOrdered +'</td>\
+                                            <td id="po_qty_received"><input type="number" value="'+poData.qtyReceived+'"/></td>\
+                                            <td id="po_supplier">'+ poData.supplier +'</td>\
+                                            <td><select id="po_status">\
+                                                <option value="PENDING" '+(poData.status == 'PENDNG' ? 'selected':'')+'>PENDING</option>\
+                                                <option value="INCOMPLETE" '+(poData.status == 'INCOMPLETE' ? 'selected':'')+'>INCOMPLETE</option>\
+                                                <option value="COMPLETE" '+(poData.status == 'COMPLETE' ? 'selected':'')+'>COMPLETE</option>\
+                                            </select>\
+                                            <input type="hidden" id="po_row_id" value="'+poData.id+'">\
+                                        </tr>';
+                        });
+
+                        poListHtml+="</tbody></table>";
+
+                        BootstrapDialog.confirm({
+                            size: BootstrapDialog.SIZE_WIDE,
+                            type: BootstrapDialog.TYPE_PRIMARY,
+                            title: 'Update Product Batch Order: <strong>#'+batchId+'</strong>',
+                            message: poListHtml,
+                            callback: function (isUpdate) {
+                                if (isUpdate) {
+                                    // Get all purchased order product records
+                                    const formTableRows = document.getElementById('formTable_'+batchId).querySelector('tbody').querySelectorAll('tr');
+                                    
+                                    let updateListsArr=[];
+                                    formTableRows.forEach((row,key) => {
+                                        // const productName=row.querySelector('#po_product').textContent;
+                                        const quantity_ordered=row.querySelector('#po_qty_ordered').textContent;
+                                        const quantity_received=row.querySelector('#po_qty_received input').value;
+                                        // const supplierName=row.querySelector('#po_supplier').textContent;
+                                        const status=row.querySelector('#po_status').value;
+                                        const productOrder_id =row.querySelector('#po_row_id').value;
+
+                                        updateListsArr.push({
+                                            // name:productName,
+                                            qtyOrdered: quantity_ordered,
+                                            qtyReceived: quantity_received,
+                                            // supplier: supplierName,
+                                            status: status,
+                                            id:productOrder_id,
+                                        });
+                                    });
+                                    
+                                    // Send request to update database
+                                    $.ajax({
+                                        method: "POST",
+                                        data: {
+                                            batchId: batchId,
+                                            data: updateListsArr,
+                                        },
+                                        url: './database/updateOrder.php',
+                                        dataType: 'JSON',
+                                        success: function (data) {
+                                            BootstrapDialog.alert({
+                                                type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
+                                                message: data.message,
+                                                callback: function () {
+                                                    if (data.success) location.reload();
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } 
+                });
             }
         }
 

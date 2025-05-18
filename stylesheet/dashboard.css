@@ -485,6 +485,27 @@ td {
       font-size: 16px;
     }
 
+    .productOrder_badge {
+      padding: 4px 6px;
+      border: 1px solid;
+    }
+
+    .productOrder_badge_PENDING {
+      border-color: #556455;
+      background: #f77c76;
+    }
+
+    .productOrder_badge_COMPLETE {
+      border-color: green;
+      background: #b5ebb5;
+    }
+
+    .productOrder_badge_INCOMPLETE {
+      border-color: #a3a3a3;
+      background: #f7e640;
+      color: #392b2b;
+    }
+
     table {
       border: none;
       
