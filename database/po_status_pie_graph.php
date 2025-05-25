@@ -15,7 +15,7 @@ foreach($response as $purchaseOrder) {
     $statuses[$purchaseOrder['status']]++;
 }
 
-$results = [
+$poStatusPieResults = [
     [
         'name'=> 'PENDING',
         'y' => $statuses['PENDING'],

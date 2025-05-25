@@ -9,6 +9,9 @@ $user = $_SESSION['user'];
 
 // Get the graph data - purchase order by status
 include('database/po_status_pie_graph.php');
+
+// Get the graph data -supplier product count
+include('database/supplier_product_bar_graph.php');
 ?>
 
 <!DOCTYPE html>
@@ -28,13 +31,23 @@ include('database/po_status_pie_graph.php');
       <!-- Top Navigator bars -->
       <?php include 'partials/app-topnav.php' ?>
       <div class="dashboardContent">
-        <div class="dashboardContentMain">
-          <figure class="highcharts-figure">
-            <div id="pieChartContainer"></div>
-            <p class="highcharts-description" style="text-align: center">
-              Breakdown of all purchased orders by status.
-            </p>
-          </figure>
+        <div class="dashboardChartContainer dashboardContentMain">
+          <div class="col50">
+            <figure class="highcharts-figure">
+              <div id="pieChartContainer"></div>
+              <p class="highcharts-description" style="text-align: center">
+                Breakdown of all purchased orders by status.
+              </p>
+            </figure>
+          </div>
+          <div class="col50">
+            <figure class="highcharts-figure">
+              <div id="barChartContainer"></div>
+              <p class="highcharts-description" style="text-align: center">
+                Total product count based on suppliers.
+              </p>
+            </figure>
+          </div>
         </div>
       </div>
     </div>
@@ -46,6 +59,7 @@ include('database/po_status_pie_graph.php');
   <script src="https://code.highcharts.com/modules/accessibility.js"></script>
   <script src="https://code.highcharts.com/modules/export-data.js"></script>
   <script>
+    // Pie Chart - Purchase Orders by Status
     Highcharts.chart('pieChartContainer', {
       chart: {
         type: 'pie'
@@ -88,7 +102,57 @@ include('database/po_status_pie_graph.php');
         {
           name: 'Status',
           colorByPoint: true,
-          data: <?= json_encode($results) ?>
+          data: <?= json_encode($poStatusPieResults) ?>
+        }
+      ]
+    });
+
+    // Bar Chart
+    Highcharts.chart('barChartContainer', {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Product Count Assigned To Supplier'
+      },
+      subtitle: {
+        text:
+          'Source: <a target="_blank" ' +
+          'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>'
+      },
+      xAxis: {
+        categories: <?= json_encode($supplierNames) ?>,
+        crosshair: true,
+        accessibility: {
+          description: 'Suppliers'
+        }
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: 'Product Set'
+        }
+      },
+      tooltip: {
+        valueSuffix: ' products'
+        // headerFormat: '<span style="font-size:10px">{point.key}</span>'
+        // pointFormatter: function() {
+        //   var point = this,
+        //   series= point.series;
+
+        //   return '<b>${point.name}</b>: ${point.y}';
+        // }
+      },
+      plotOptions: {
+        column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
+      },
+      series: [
+        {
+          name: 'Product Count',
+          data: <?= json_encode($barChartData) ?>
         }
       ]
     });
