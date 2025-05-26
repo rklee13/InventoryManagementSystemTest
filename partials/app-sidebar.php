@@ -11,7 +11,10 @@ $user = $_SESSION['user'];
         <ul class="dashboardMenuLists">
             <!-- class="activeMenu" -->
             <li class="listMainMenuItem">
-                <a href="./dashboard.php"><i class="fa-solid fa-gauge"></i><span class="menuText">Dashboard</span></a>
+                <a href="./dashboard.php"><i class="fa-solid fa-gauge"></i><span class="menuText"> Dashboard</span></a>
+            </li>
+            <li class="listMainMenuItem">
+                <a href="./report.php"><i class="fa-solid fa-file"></i><span class="menuText"> Reports</span></a>
             </li>
             <li class="listMainMenuItem">
                 <a href="javascript:void(0)" class="showHideSubMenu">

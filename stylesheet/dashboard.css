@@ -190,18 +190,18 @@ div.dashboardSidebar {
       }
     }
 
+    .subMenuActive {
+      font-weight: bold;
+      border-top: 2px solid white;
+      border-bottom: 2px solid white;
+      background-color: #763a49;
+    }
+
     ul.subMenus {
       list-style: none;
       background-color: #c26a80;
       padding-left: 0px;
       display: none;
-
-      .subMenuActive {
-        font-weight: bold;
-        border-top: 2px solid white;
-        border-bottom: 2px solid white;
-        background-color: #763a49;
-      }
 
       a.subMenuLink {
         padding-top: 10px;
@@ -535,6 +535,7 @@ td {
     border: 1px solid #FF5722;
     background: none;
   }
+
   .deliveryHistoryButton:hover {
     background: #FF5722;
     color: #fff;
@@ -559,4 +560,49 @@ td {
 .deliveryHistoryTable {
   font-size: 14px;
   padding: 10px 20px;
+}
+
+.reportsContainer {
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px 31px;
+
+  .reportType {
+    border: 1px solid #c2c6c2;
+    padding: 10px 24px;
+    border-radius: 4px;
+    background: white;
+    font-size: 14px;
+    margin-left: 21px;
+    width: 100%;
+
+    p {
+      font-weight: 200;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .reportType:hover {
+    background: #763a49;
+    color: #fff;
+  }
+
+  .reportExportButton {
+    padding: 4px 15px;
+    display: inline-block;
+    text-decoration: none;
+    text-transform: uppercase;
+    background: #f685a1;
+    color: white;
+    margin-left: 13px;
+    font-size: 12px;
+    border: 1px solid transparent;
+  }
+
+  .reportExportButton:hover {
+    border: 1px solid #f685a1;
+    background: #fff;
+    color: #f685a1;
+  }
 }
