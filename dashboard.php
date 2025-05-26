@@ -12,6 +12,9 @@ include('database/po_status_pie_graph.php');
 
 // Get the graph data -supplier product count
 include('database/supplier_product_bar_graph.php');
+
+// Get the graph data -delivery history per day
+include('database/delivery_history_line_graph.php');
 ?>
 
 <!DOCTYPE html>
@@ -48,6 +51,16 @@ include('database/supplier_product_bar_graph.php');
               </p>
             </figure>
           </div>
+        </div>
+        <div class="dashboardContentMain">
+          <figure class="highcharts-figure">
+            <div id="deliveryHistoryLineChartContainer"></div>
+            <p class="highcharts-description">
+              Basic line chart showing trends in a dataset. This chart includes the
+              <code>series-label</code> module, which adds a label to each line for
+              enhanced readability.
+            </p>
+          </figure>
         </div>
       </div>
     </div>
@@ -156,6 +169,67 @@ include('database/supplier_product_bar_graph.php');
         }
       ]
     });
+  
+    // Line Chart
+    Highcharts.chart('deliveryHistoryLineChartContainer', {
+      // chart: {
+      //   type: 'spline'
+      // },
+
+    title: {
+        text: 'Delivery History Per Day',
+        align: 'left'
+    },
+
+    yAxis: {
+        title: {
+            text: 'Product Delivered'
+        }
+    },
+
+    xAxis: {
+      categories: <?= json_encode($line_categories) ?>
+        // accessibility: {
+        //     rangeDescription: 'Range: 2010 to 2022'
+        // }
+    },
+
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+    },
+
+    plotOptions: {
+        series: {
+            label: {
+                connectorAllowed: false
+            },
+        }
+    },
+
+    series: [{
+        name: 'Product Delivered',
+        data: <?= json_encode($line_data) ?>
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'bottom'
+                }
+            }
+        }]
+    }
+
+});
+
   </script>
 </body>
 

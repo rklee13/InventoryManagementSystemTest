@@ -41,6 +41,7 @@ $products = include 'database/showAll.php';
                                                 <th>Image</th>
                                                 <th>Product Name</th>
                                                 <th>Description</th>
+                                                <th>Stock</th>
                                                 <th>Suppliers</th>
                                                 <th>Created By</th>
                                                 <th>Created At</th>
@@ -58,6 +59,7 @@ $products = include 'database/showAll.php';
                                                     </td>
                                                     <td id="productName"><?= $product['product_name'] ?></td>
                                                     <td id="description"><?= $product['description'] ?></td>
+                                                    <td id="stock"><?= number_format($product['stock']) ?></td>
                                                     <td id="suppliersList">
                                                         <?php
                                                         $productId = $product['id'];

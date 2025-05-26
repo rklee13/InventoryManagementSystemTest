@@ -531,6 +531,15 @@ td {
     }
   }
 
+  .deliveryHistoryButton {
+    border: 1px solid #FF5722;
+    background: none;
+  }
+  .deliveryHistoryButton:hover {
+    background: #FF5722;
+    color: #fff;
+  }
+
   .poOrderButtonContainer {
     margin-top: 20px;
 
@@ -545,4 +554,9 @@ td {
       background: #f685a1;
     }
   }
+}
+
+.deliveryHistoryTable {
+  font-size: 14px;
+  padding: 10px 20px;
 }

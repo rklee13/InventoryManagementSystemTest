@@ -35,7 +35,7 @@ $product_orders_all = include 'database/showAll.php';
                             <div class="userListContent">
                                 <div class="poListContainers">
                                     <?php 
-                                        $stmt = $connection->prepare("SELECT product_order.id, products.product_name, product_order.quantity_ordered, suppliers.supplier_name, product_order.status, 
+                                        $stmt = $connection->prepare("SELECT product_order.id, product_order.product, products.product_name, product_order.quantity_ordered, suppliers.supplier_name, product_order.status, 
                                             product_order.batch, UserLoginInformation.first_name, UserLoginInformation.last_name, product_order.quantity_received, product_order.created_at 
                                             FROM product_order, suppliers, products, UserLoginInformation 
                                             WHERE product_order.supplier = suppliers.id AND product_order.product = products.id AND product_order.created_by = UserLoginInformation.id
@@ -64,6 +64,7 @@ $product_orders_all = include 'database/showAll.php';
                                                         <th>Status</th>
                                                         <th>Ordered By</th>
                                                         <th>Created Date</th>
+                                                        <th>Delivery History</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -79,6 +80,10 @@ $product_orders_all = include 'database/showAll.php';
                                                             <td>
                                                                 <?= date('M d, Y h:i:s A e', strtotime($product_order['created_at'])) ?>
                                                                 <input type="hidden" id="po_row_id" value="<?= $product_order['id']?>">
+                                                                <input type="hidden" id="po_productId" value="<?= $product_order['product']?>">
+                                                            </td>
+                                                            <td>
+                                                                <button id="showDeliveryHistoryButton" class="button deliveryHistoryButton" data-id="<?= $product_order['id'] ?>">Delivery History</button>
                                                             </td>
                                                         </tr>
                                                     <?php endforeach ?>
@@ -142,6 +147,7 @@ $product_orders_all = include 'database/showAll.php';
                             const supplierName=row.querySelector('#po_supplier').textContent;
                             const status=row.querySelector('#po_status').textContent;
                             const productOrder_id =row.querySelector('#po_row_id').value;
+                            const productOrder_productId = row.querySelector('#po_productId').value;
 
                             poListsArr.push({
                                 name:productName,
@@ -150,6 +156,7 @@ $product_orders_all = include 'database/showAll.php';
                                 supplier: supplierName,
                                 status: status,
                                 id:productOrder_id,
+                                productId: productOrder_productId,
                             });
                         });
 
@@ -160,6 +167,7 @@ $product_orders_all = include 'database/showAll.php';
                                                         <th>Product</th>\
                                                         <th>Quantity Ordered</th>\
                                                         <th>Quantity Received</th>\
+                                                        <th>Quantity Delivered</th>\
                                                         <th>Supplier</th>\
                                                         <th>Status</th>\
                                                     </tr>\
@@ -167,11 +175,13 @@ $product_orders_all = include 'database/showAll.php';
                                                 <tbody>';
                         
                         poListsArr.forEach(poData => {
+                            const qtyReceived = !poData.qtyReceived ? '0' : poData.qtyReceived;
                             poListHtml+='\
                                         <tr>\
                                             <td id="po_product">'+ poData.name +'</td>\
                                             <td id="po_qty_ordered">'+ poData.qtyOrdered +'</td>\
-                                            <td id="po_qty_received"><input type="number" value="'+poData.qtyReceived+'"/></td>\
+                                            <td id="po_qty_received">'+ qtyReceived +'</td>\
+                                            <td id="po_qty_delivered"><input type="number" value="'+0+'"/></td>\
                                             <td id="po_supplier">'+ poData.supplier +'</td>\
                                             <td><select id="po_status">\
                                                 <option value="PENDING" '+(poData.status == 'PENDNG' ? 'selected':'')+'>PENDING</option>\
@@ -179,6 +189,7 @@ $product_orders_all = include 'database/showAll.php';
                                                 <option value="COMPLETE" '+(poData.status == 'COMPLETE' ? 'selected':'')+'>COMPLETE</option>\
                                             </select>\
                                             <input type="hidden" id="po_row_id" value="'+poData.id+'">\
+                                            <input type="hidden" id="po_productId" value="'+poData.productId+'">\
                                         </tr>';
                         });
 
@@ -197,19 +208,21 @@ $product_orders_all = include 'database/showAll.php';
                                     let updateListsArr=[];
                                     formTableRows.forEach((row,key) => {
                                         // const productName=row.querySelector('#po_product').textContent;
-                                        const quantity_ordered=row.querySelector('#po_qty_ordered').textContent;
-                                        const quantity_received=row.querySelector('#po_qty_received input').value;
                                         // const supplierName=row.querySelector('#po_supplier').textContent;
+                                        const quantity_ordered=row.querySelector('#po_qty_ordered').textContent;
+                                        const quantity_received=row.querySelector('#po_qty_received').textContent;
+                                        const quantity_delivered=row.querySelector('#po_qty_delivered input').value;
                                         const status=row.querySelector('#po_status').value;
                                         const productOrder_id =row.querySelector('#po_row_id').value;
+                                        const productOrder_productId = row.querySelector('#po_productId').value;
 
                                         updateListsArr.push({
-                                            // name:productName,
                                             qtyOrdered: quantity_ordered,
                                             qtyReceived: quantity_received,
-                                            // supplier: supplierName,
+                                            qtyDelivered: quantity_delivered,
                                             status: status,
-                                            id:productOrder_id,
+                                            id: productOrder_id,
+                                            productId: productOrder_productId
                                         });
                                     });
                                     
@@ -218,9 +231,9 @@ $product_orders_all = include 'database/showAll.php';
                                         method: "POST",
                                         data: {
                                             batchId: batchId,
-                                            data: updateListsArr,
+                                            data: updateListsArr
                                         },
-                                        url: './database/updateOrder.php',
+                                        url: 'database/updateOrder.php',
                                         dataType: 'JSON',
                                         success: function (data) {
                                             BootstrapDialog.alert({
@@ -235,7 +248,46 @@ $product_orders_all = include 'database/showAll.php';
                                 }
                             }
                         });
-                    } 
+                    } else if (targetElememtId === 'showDeliveryHistoryButton') {
+                        const productOrder_Id = targetElement.dataset.id;
+
+                        $.get('database/viewDeliveryHistory.php', {id: productOrder_Id}, function(data) {
+                            if (data.length) {
+                                rows = '';
+                                data.forEach((row, id) => {
+                                    rows += '\
+                                        <tr>\
+                                            <td>'+ ++id +'</td>\
+                                            <td>'+ new Date(row['date_received']).toUTCString() +'</td>\
+                                            <td>'+ row['quatity_received'] +'</td>\
+                                        </tr>';
+                                });
+
+                                let deliveryHistoryHtml='<table class="deliveryHistoryTable">\
+                                        <thead>\
+                                            <tr>\
+                                                <th>#</th>\
+                                                <th>Date Received</th>\
+                                                <th>Quantity Received</th>\
+                                            </tr>\
+                                        </thead>\
+                                        <tbody>' + rows + '</tbody></table>';
+
+
+                                BootstrapDialog.alert({
+                                    title: "<strong>Delivery History</strong>",
+                                    type: BootstrapDialog.TYPE_PRIMARY,
+                                    message: deliveryHistoryHtml
+                                });
+                            } else {
+                                BootstrapDialog.alert({
+                                    title: "<strong>No Delivery History</strong>",
+                                    type: BootstrapDialog.TYPE_INFO,
+                                    message: "No delivery history found."
+                                });
+                            }
+                        }, 'JSON');
+                    }
                 });
             }
         }
