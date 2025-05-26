@@ -21,3 +21,5 @@ https://www.freepik.com/free-vector/blue-circle-with-white-user_145857007.htm#fr
 Downloaded compressed JQuery 3.7.1 from the website
 
 Using HighCharts plugin for the pie, bar, and line chart - based on this demo https://jsfiddle.net/api/post/library/pure/
+
+For exporting PDF, I use the FPDF Library - https://www.fpdf.org/
