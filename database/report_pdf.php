@@ -45,9 +45,9 @@ class IMSPDF extends FPDF
             // Clean up the data
             if ($type === 'products' || $type === 'suppliers') {
                 unset($row_header['first_name'], $row_header['last_name']);
-                if ($type === 'products') {
-                    unset($row_header['image']);
-                }
+                // if ($type === 'products') {
+                //     unset($row_header['image']);
+                // }
             } else if ($type === 'deliveries') {
 
             } else if ($type === 'orders') {
@@ -69,9 +69,9 @@ class IMSPDF extends FPDF
                     $row['updated_at'] = date('M d,Y H:i:s A', strtotime($row['updated_at']));
                     $row['created_at'] = date('M d,Y H:i:s A', strtotime($row['created_at']));
                     unset($row['first_name'], $row['last_name']);
-                    if ($type === 'products') {
-                        unset($row['image']);
-                    }
+                    // if ($type === 'products') {
+                    //     unset($row['image']);
+                    // }
                 } else if ($type === 'deliveries') {
 
                 } else if ($type === 'orders') {
@@ -102,7 +102,7 @@ class IMSPDF extends FPDF
         $this->SetLineWidth(.3);
         $this->SetFont('', 'B');
         // Header
-        $w = array(15, 40, 60, 20, 40, 50, 50);
+        $w = array(12, 35, 55, 35, 15, 30, 45, 45);
         for ($i = 0; $i < count($header); $i++)
             $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C', true);
         $this->Ln();
@@ -111,23 +111,27 @@ class IMSPDF extends FPDF
         $this->SetTextColor(0);
         $this->SetFont('');
         // Data
-        $fill = false;
         foreach ($data as $row) {
-            $this->Cell($w[0], 6, number_format($row[0]), 'LR', 0, 'C', $fill);
-            $this->Cell($w[1], 6, $row[1], 'LR', 0, 'L', $fill);
-
+            $this->Cell($w[0], 30, number_format($row[0]), 'LRBT', 0, 'C');
+            $this->Cell($w[1], 30, $row[1], 'LRBT', 0, 'L');
+            
+            // Add a description that takes multiple lines/word wraps
             $current_y = $this->GetY();
             $current_x = $this->GetX();
-            $this->MultiCell($w[2], 6, $row[2], 'LR', 'L', $fill);
+            $this->MultiCell($w[2], 6, $row[2], 'LRT', 'L');
             $this->SetXY($current_x + $w[2], $current_y);
 
-            // $this->Cell($w[3], 6, $row[3], 'LR', 0, 'C', $fill); // Image
-            $this->Cell($w[3], 6, number_format($row[3]), 'LR', 0, 'C', $fill);
-            $this->Cell($w[4], 6, $row[4], 'LR', 0, 'C', $fill);
-            $this->Cell($w[5], 6, $row[5], 'LR', 0, 'L', $fill);
-            $this->Cell($w[6], 6, $row[6], 'LR', 0, 'L', $fill);
+            // Add an image to the current x & y location of the cell
+            $current_y = $this->GetY();
+            $current_x = $this->GetX();
+            $image_name = $row[3] ? $this->Image('.././uploads/products/'.$row[3],$current_x,$current_y, 30, 25) : 'No image filed';
+            $this->Cell($w[3], 30, $image_name, 'LRBT', 0, 'C'); // Image
+
+            $this->Cell($w[4], 30, number_format($row[4]), 'LRBT', 0, 'C');
+            $this->Cell($w[5], 30, $row[5], 'LRBT', 0, 'C');
+            $this->Cell($w[6], 30, $row[6], 'LRBT', 0, 'L');
+            $this->Cell($w[7], 30, $row[7], 'LRBT', 0, 'L');
             $this->Ln();
-            $fill = !$fill;
         }
         // Closing line
         $this->Cell(array_sum($w), 0, '', 'T');
@@ -161,7 +165,7 @@ if (count($dataRows) > 0) {
     $pdf->Cell(50, 10, $mapping_filenames[$type], 0, 0, 'C');
     // Line break
     $pdf->Ln(20);
-    $pdf->SetFont('Arial', '', 11);
+    $pdf->SetFont('Arial', '', 10);
     $pdf->FancyTable($header, $data);
     $pdf->Output();
 }
