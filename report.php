@@ -30,14 +30,14 @@ $user = $_SESSION['user'];
                         <p>Export Products</p>
                         <div class="alignRight">
                             <a class="reportExportButton" href="database/report_csv.php?report=products">CSV</a>
-                            <a class="reportExportButton" href="database/report_pdf.php?report=products">PDF</a>
+                            <a class="reportExportButton" href="database/report_pdf.php?report=products" target="_blank">PDF</a>
                         </div>
                     </div>
                     <div class="reportType">
                         <p>Export Suppliers</p>
                         <div class="alignRight">
                             <a class="reportExportButton" href="database/report_csv.php?report=suppliers">CSV</a>
-                            <a class="reportExportButton" href="database/report_pdf.php?report=suppliers">PDF</a>
+                            <a class="reportExportButton" href="database/report_pdf.php?report=suppliers" target="_blank">PDF</a>
                         </div>
                     </div>
                 </div>
@@ -46,14 +46,14 @@ $user = $_SESSION['user'];
                         <p>Export Deliveries</p>
                         <div class="alignRight">
                             <a class="reportExportButton" href="database/report_csv.php?report=deliveries">CSV</a>
-                            <a class="reportExportButton" href="database/report_pdf.php?report=deliveries">PDF</a>
+                            <a class="reportExportButton" href="database/report_pdf.php?report=deliveries" target="_blank">PDF</a>
                         </div>
                     </div>
                     <div class="reportType">
                         <p>Export Purchase Orders</p>
                         <div class="alignRight">
                             <a class="reportExportButton" href="database/report_csv.php?report=orders">CSV</a>
-                            <a class="reportExportButton" href="database/report_pdf.php?report=orders">PDF</a>
+                            <a class="reportExportButton" href="database/report_pdf.php?report=orders" target="_blank">PDF</a>
                         </div>
                     </div>
                 </div>
