@@ -19,11 +19,26 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
     if ($result && $stmt->rowCount() > 0) {
         // Fetches all the associated information
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $userInfo = $stmt->fetchAll()[0];
+        $usersInfo = $stmt->fetchAll();
 
-        // This saves the session so once a user comes back, they don't have to login again
-        $_SESSION['user']=$userInfo;
-        header('location:dashboard.php');
+        $user_exist = false;
+        foreach($usersInfo as $user) {
+            if ($password === $user['password']) {
+                $user_exist = true;
+                $user['permissions'] = explode(',', $user['permissions']);
+
+                // This saves the session so once a user comes back, they don't have to login again
+                $_SESSION['user']=$user;
+                break;
+            }
+        }
+
+        if ($user_exist) {
+            header('location:dashboard.php');
+        } else {
+            $error_message="Invalid user information. Verify the login information is correct, and then please try again.";    
+        }
+
     } else {
         $error_message="Invalid user information. Verify the login information is correct, and then please try again.";
     }

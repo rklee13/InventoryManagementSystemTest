@@ -606,3 +606,33 @@ td {
     color: #f685a1;
   }
 }
+
+#permissions {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+
+  .permission {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .moduleName {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .moduleFunction {
+    text-align: center;
+    border: 1px solid #c1c1c1;
+    cursor: pointer;
+  }
+
+  .permissionActive {
+    background-color: #f685a1;
+    color: #fff;
+    border: 1px solid #de2855;
+    transition: 0.3s;
+  }
+}

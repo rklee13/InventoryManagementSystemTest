@@ -47,6 +47,18 @@ foreach ($columns as $column) {
     $queryString .= "$column = :$column,";
     $databaseArray[$column] = $value;
 }
+
+// Error handling
+if (isset($databaseArray['permissions'])) {
+    if (!$databaseArray['permissions']) {
+        echo json_encode([
+            'success' => false,
+            'message' => "<strong>$name</strong> does not have any permissions set.",
+        ]);
+        die;
+    }
+}
+
 $queryString = rtrim($queryString, ",");
 if (isset($columns['last_name'])) {
     $name = $name + ' ' + $columns['last_name'];

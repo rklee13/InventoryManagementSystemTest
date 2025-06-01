@@ -6,7 +6,7 @@ if (!isset($_SESSION['user']))
     header("location:login.php");
 
 // $_SESSION['table'] = 'UserLoginInformation';
-$show_table ='UserLoginInformation';
+$show_table = 'UserLoginInformation';
 $user = $_SESSION['user'];
 
 $users = include 'database/showAll.php';
@@ -66,6 +66,8 @@ $users = include 'database/showAll.php';
                                                             data-lname="<?= $user['last_name'] ?>"
                                                             class="deleteUserButton"><i class="fa-solid fa-trash"></i>
                                                             Delete</a>
+                                                        <input type="hidden" id="cur_permissions_<?= $user['id'] ?>"
+                                                            value="<?= $user['permissions'] ?>">
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>
@@ -96,6 +98,118 @@ $users = include 'database/showAll.php';
     <?php include('partials/app-scripts.php') ?>
     <script>
         function script() {
+            this.allowedPermissionList=[];
+            this.permissionElement = '\
+                <div id="permissions">\
+                    <h4>Permissions</h4>\
+                    <hr>\
+                    <div class="permissionsContainer">\
+                        <div class="permission">\
+                            <div class="row">\
+                                <div class="col-md-3">\
+                                    <p class="moduleName">Dashboard</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="dashboard_view">View</p>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class="permission">\
+                            <div class="row">\
+                                <div class="col-md-3">\
+                                    <p class="moduleName">Reports</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="report_view">View</p>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class="permission">\
+                            <div class="row">\
+                                <div class="col-md-3">\
+                                    <p class="moduleName">Purchase Order</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="purchaseOrder_view">View</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="purchaseOrder_create">Create</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="purchaseOrder_edit">Edit</p>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class="permission">\
+                            <div class="row">\
+                                <div class="col-md-3">\
+                                    <p class="moduleName">Product</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="product_view">View</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="product_create">Create</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="product_edit">Edit</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="product_delete">Delete</p>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class="permission">\
+                            <div class="row">\
+                                <div class="col-md-3">\
+                                    <p class="moduleName">Supplier</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="supplier_view">View</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="supplier_create">Create</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="supplier_edit">Edit</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="supplier_delete">Delete</p>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class="permission">\
+                            <div class="row">\
+                                <div class="col-md-3">\
+                                    <p class="moduleName">Users</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="users_view">View</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="users_create">Create</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="users_edit">Edit</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="users_delete">Delete</p>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class="permission">\
+                            <div class="row">\
+                                <div class="col-md-3">\
+                                    <p class="moduleName">Point of Sale</p>\
+                                </div>\
+                                <div class="col-md-2">\
+                                    <p class="moduleFunction" data-value="pointOfSale_access">Has Access</p>\
+                                </div>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>';
+
             this.initialize = function () {
                 this.registerEvents();
             },
@@ -150,6 +264,7 @@ $users = include 'database/showAll.php';
                             const email = targetElement.closest('tr').querySelector("#email").textContent;
                             const fullName = firstName + ' ' + lastName;
 
+                            const permissions = document.getElementById('cur_permissions_' + userId).value;
 
                             BootstrapDialog.confirm({
                                 title: 'Update ' + fullName,
@@ -165,7 +280,8 @@ $users = include 'database/showAll.php';
                                 <div class="form-group">\
                                 <label for="email">email:</label>\
                                 <input type="email" class="form-control" id="emailUpdate" value="'+ email + '">\
-                                </div>\
+                                </div>' + script.permissionElement + '\
+                                <input type="hidden" name="permissions" id="permissionsInput" value="'+ permissions + '">\
                                 </form>',
                                 callback: function (isUpdate) {
                                     if (isUpdate) { // if user clicked "Ok" button
@@ -177,6 +293,7 @@ $users = include 'database/showAll.php';
                                                 first_name: document.getElementById("firstNameUpdate").value,
                                                 last_name: document.getElementById("lastNameUpdate").value,
                                                 email: document.getElementById("emailUpdate").value,
+                                                permissions: document.getElementById("permissionsInput").value,
                                             },
                                             url: './database/update.php',
                                             dataType: 'JSON',
@@ -191,8 +308,44 @@ $users = include 'database/showAll.php';
                                             }
                                         });
                                     }
+                                },
+                                onshown: function () {
+                                    // Get each permissions
+                                    const currentPermissions = permissions.split(',');
+                                    script.allowedPermissionList = [];  // Clear it
+
+                                    // Loop through each permission and apply the active styling - i.e. selection
+                                    currentPermissions?.forEach(permission => {
+                                        if (permission !== '') {
+                                            let permissionTargetElement = document.querySelector("[data-value='" + permission + "'");
+                                            if (permissionTargetElement != null) {
+                                                permissionTargetElement.classList.add('permissionActive');
+                                                script.allowedPermissionList.push(permission);
+                                            }
+                                        }
+                                    });
                                 }
                             });
+                        } else if (targetElement.classList.contains('moduleFunction')) {
+                            // Get value
+                            const permissionName = targetElement.dataset.value;
+
+                            // Set the active class & store/remove permissions
+                            if (targetElement.classList.contains('permissionActive')) {
+                                targetElement.classList.remove('permissionActive');
+
+                                // Remove this from the permission array
+                                script.allowedPermissionList = script.allowedPermissionList.filter((name) => {
+                                    return name !== permissionName;
+                                });
+
+                            } else {
+                                targetElement.classList.add('permissionActive');
+                                script.allowedPermissionList.push(permissionName);
+                            }
+
+                            // Update the hidden element
+                            document.getElementById('permissionsInput').value = script.allowedPermissionList.join(',');
                         }
                     });
                 }

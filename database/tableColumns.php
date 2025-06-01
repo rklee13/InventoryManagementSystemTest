@@ -1,7 +1,7 @@
 <?php
 $table_columns_mapping = [
     'UserLoginInformation' => [
-        'first_name', 'last_name', 'password', 'email', 'created_at', 'updated_at'
+        'first_name', 'last_name', 'password', 'email', 'permissions', 'created_at', 'updated_at'
     ],
     'products'=> [
         'product_name', 'description', 'image', 'created_by', 'created_at', 'updated_at'
@@ -13,7 +13,7 @@ $table_columns_mapping = [
 
 $table_update_columns_mapping = [
     'UserLoginInformation' => [
-        'first_name', 'last_name', 'email', 'updated_at'
+        'first_name', 'last_name', 'email', 'permissions', 'updated_at'
     ],
     'products'=> [
         'product_name', 'description', 'image', 'updated_at'

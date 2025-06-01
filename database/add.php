@@ -49,6 +49,18 @@ foreach ($columns as $column) {
     $databaseArray[$column] = $value;
 }
 
+// Error handling
+if (isset($databaseArray['permissions'])) {
+    if (!$databaseArray['permissions']) {
+        $_SESSION['response'] = [
+            'success' => false,
+            'message' => 'Please make sure permission is set for the user!',
+        ];
+        header('location: ../' . $_SESSION['redirect_to']);
+        die;
+    }
+}
+
 // Convert the column names into a string for SQL
 $table_properties = implode(', ', array_keys($databaseArray));
 $table_values = ":" . implode(", :", array_keys($databaseArray));
@@ -93,6 +105,5 @@ try {
 }
 
 $_SESSION['response'] = $response;
-$_SESSION['redirect_to'];
 header('location: ../' . $_SESSION['redirect_to']);
 ?>

@@ -33,6 +33,7 @@ include('database/delivery_history_line_graph.php');
     <div class="dashboardContentContainer" id="dashboardContentContainer">
       <!-- Top Navigator bars -->
       <?php include 'partials/app-topnav.php' ?>
+      <?php if (in_array('dashboard_view', $user['permissions'])) { ?>
       <div class="dashboardContent">
         <div class="dashboardChartContainer dashboardContentMain">
           <div class="col50">
@@ -63,6 +64,9 @@ include('database/delivery_history_line_graph.php');
           </figure>
         </div>
       </div>
+      <?php } else { ?>
+        <div id="errorMessage"> Access denied.</div>
+      <?php }?>
     </div>
   </div>
 

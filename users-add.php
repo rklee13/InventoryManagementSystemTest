@@ -50,6 +50,8 @@ $_SESSION['redirect_to'] = 'users-add.php';
                                         <label for="password">Password:</label>
                                         <input type="password" id="password" name="password" class="appFormInput" />
                                     </div>
+                                    <input type="hidden" name="permissions" id="permissionsInput">
+                                    <?php include('./partials/app-permissions.php') ?>
                                     <button type="Submit" class="addUserButton"><i class="fa-solid fa-plus"></i> Add
                                         User</button>
                                 </form>
@@ -73,5 +75,46 @@ $_SESSION['redirect_to'] = 'users-add.php';
         </div>
     </div>
     <?php include('partials/app-scripts.php')?>
+<script>
+    function loadScript() {
+        this.allowedPermissionList = [];
+
+        this.initialize = function(){
+            this.registerEvents();
+        }
+
+        this.registerEvents = function() {
+            document.addEventListener('click', function(e) {
+                const targetElement = e.target;
+
+                // Check if class name contains moduleFunction - is clicked
+                if (targetElement.classList.contains('moduleFunction')) {
+                    // Get value
+                    const permissionName = targetElement.dataset.value;
+
+                    // Set the active class & store/remove permissions
+                    if (targetElement.classList.contains('permissionActive')) {
+                        targetElement.classList.remove('permissionActive');
+
+                        // Remove this from the permission array
+                        script.allowedPermissionList=script.allowedPermissionList.filter((name) => {
+                            return name!== permissionName;
+                        });
+
+                    } else {
+                        targetElement.classList.add('permissionActive');
+                        script.allowedPermissionList.push(permissionName);
+                    }
+
+                    // Update the hidden element
+                    document.getElementById('permissionsInput').value = script.allowedPermissionList.join(',');
+                }
+            });
+        }
+    }
+
+    var script = new loadScript;
+    script.initialize();
+</script>
 </body>
 </html>
