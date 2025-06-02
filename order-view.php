@@ -25,93 +25,98 @@ $product_orders_all = include 'database/showAll.php';
         <div class="dashboardContentContainer" id="dashboardContentContainer">
             <!-- Top Navigator bars -->
             <?php include 'partials/app-topnav.php' ?>
+            <?php if (in_array('purchaseOrder_view', $user['permissions'])) { ?>
+                <!-- Main content section -->
+                <div class="dashboardContent">
+                    <div class="dashboardContentMain">
+                        <div class="rowInfo">
+                            <div class="column column-12">
+                                <h1><i class="fa-solid fa-users"></i> List of Purchased Orders</h1>
+                                <div class="userListContent">
+                                    <div class="poListContainers">
+                                        <?php 
+                                            $stmt = $connection->prepare("SELECT product_order.id, product_order.product, products.product_name, product_order.quantity_ordered, suppliers.supplier_name, product_order.status, 
+                                                product_order.batch, UserLoginInformation.first_name, UserLoginInformation.last_name, product_order.quantity_received, product_order.created_at 
+                                                FROM product_order, suppliers, products, UserLoginInformation 
+                                                WHERE product_order.supplier = suppliers.id AND product_order.product = products.id AND product_order.created_by = UserLoginInformation.id
+                                                ORDER BY product_order.created_at DESC");
 
-            <!-- Main content section -->
-            <div class="dashboardContent">
-                <div class="dashboardContentMain">
-                    <div class="rowInfo">
-                        <div class="column column-12">
-                            <h1><i class="fa-solid fa-users"></i> List of Purchased Orders</h1>
-                            <div class="userListContent">
-                                <div class="poListContainers">
-                                    <?php 
-                                        $stmt = $connection->prepare("SELECT product_order.id, product_order.product, products.product_name, product_order.quantity_ordered, suppliers.supplier_name, product_order.status, 
-                                            product_order.batch, UserLoginInformation.first_name, UserLoginInformation.last_name, product_order.quantity_received, product_order.created_at 
-                                            FROM product_order, suppliers, products, UserLoginInformation 
-                                            WHERE product_order.supplier = suppliers.id AND product_order.product = products.id AND product_order.created_by = UserLoginInformation.id
-                                            ORDER BY product_order.created_at DESC");
+                                            $stmt->execute();
+                                            $purchase_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                                        $stmt->execute();
-                                        $purchase_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                            $data=[];
+                                            foreach($purchase_orders as $order) {
+                                                $data[$order['batch']][]=$order;
+                                            }
+                                        ?>
 
-                                        $data=[];
-                                        foreach($purchase_orders as $order) {
-                                            $data[$order['batch']][]=$order;
-                                        }
-                                    ?>
-
-                                    <?php foreach ($data as $batchId => $product_orders): ?>
-                                        <div class="poList" id="<?= $batchId ?>">
-                                            <p>Batch #: <?= $batchId ?></p>
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>Product</th>
-                                                        <th>Quantity Ordered</th>
-                                                        <th>Quantity Received</th>
-                                                        <th>Supplier</th>
-                                                        <th>Status</th>
-                                                        <th>Ordered By</th>
-                                                        <th>Created Date</th>
-                                                        <th>Delivery History</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php foreach ($product_orders as $index=>$product_order): ?>
+                                        <?php foreach ($data as $batchId => $product_orders): ?>
+                                            <div class="poList" id="<?= $batchId ?>">
+                                                <p>Batch #: <?= $batchId ?></p>
+                                                <table>
+                                                    <thead>
                                                         <tr>
-                                                            <td><?= $index+1 ?></td>
-                                                            <td id="po_product"><?= $product_order['product_name'] ?></td>
-                                                            <td id="po_qty_ordered"><?= $product_order['quantity_ordered'] ?></td>
-                                                            <td id="po_qty_received"><?= $product_order['quantity_received'] ?></td>
-                                                            <td id="po_supplier"><?= $product_order['supplier_name'] ?></td>
-                                                            <td><span id="po_status" class="productOrder_badge productOrder_badge_<?= $product_order['status'] ?>"><?= $product_order['status'] ?></span></td>
-                                                            <td><?= $product_order['first_name'] . ' ' . $product_order['last_name']?></td>
-                                                            <td>
-                                                                <?= date('M d, Y h:i:s A e', strtotime($product_order['created_at'])) ?>
-                                                                <input type="hidden" id="po_row_id" value="<?= $product_order['id']?>">
-                                                                <input type="hidden" id="po_productId" value="<?= $product_order['product']?>">
-                                                            </td>
-                                                            <td>
-                                                                <button id="showDeliveryHistoryButton" class="button deliveryHistoryButton" data-id="<?= $product_order['id'] ?>">Delivery History</button>
-                                                            </td>
+                                                            <th>#</th>
+                                                            <th>Product</th>
+                                                            <th>Quantity Ordered</th>
+                                                            <th>Quantity Received</th>
+                                                            <th>Supplier</th>
+                                                            <th>Status</th>
+                                                            <th>Ordered By</th>
+                                                            <th>Created Date</th>
+                                                            <th>Delivery History</th>
                                                         </tr>
-                                                    <?php endforeach ?>
-                                                </tbody>
-                                            </table>
-                                            <div class="poOrderButtonContainer alignRight">
-                                                <button id="updatePoButton" class="button updatePoButton" data-id="<?= $batchId ?>">Update</button>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach ($product_orders as $index=>$product_order): ?>
+                                                            <tr>
+                                                                <td><?= $index+1 ?></td>
+                                                                <td id="po_product"><?= $product_order['product_name'] ?></td>
+                                                                <td id="po_qty_ordered"><?= $product_order['quantity_ordered'] ?></td>
+                                                                <td id="po_qty_received"><?= $product_order['quantity_received'] ?></td>
+                                                                <td id="po_supplier"><?= $product_order['supplier_name'] ?></td>
+                                                                <td><span id="po_status" class="productOrder_badge productOrder_badge_<?= $product_order['status'] ?>"><?= $product_order['status'] ?></span></td>
+                                                                <td><?= $product_order['first_name'] . ' ' . $product_order['last_name']?></td>
+                                                                <td>
+                                                                    <?= date('M d, Y h:i:s A e', strtotime($product_order['created_at'])) ?>
+                                                                    <input type="hidden" id="po_row_id" value="<?= $product_order['id']?>">
+                                                                    <input type="hidden" id="po_productId" value="<?= $product_order['product']?>">
+                                                                </td>
+                                                                <td>
+                                                                    <button id="showDeliveryHistoryButton" class="button deliveryHistoryButton" data-id="<?= $product_order['id'] ?>">Delivery History</button>
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach ?>
+                                                    </tbody>
+                                                </table>
+                                                <?php if (in_array('purchaseOrder_edit', $user['permissions'])) { ?>
+                                                    <div class="poOrderButtonContainer alignRight">
+                                                        <button id="updatePoButton" class="button updatePoButton" data-id="<?= $batchId ?>">Update</button>
+                                                    </div>
+                                                <?php } ?>
                                             </div>
-                                        </div>
-                                    <?php endforeach ?>
+                                        <?php endforeach ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <?php
+                    if (isset($_SESSION['response'])) {
+                        $response_message = $_SESSION['response']['message'];
+                        $is_success = $_SESSION['response']['success'];
+                        ?>
+                        <div class="responseMessage">
+                            <p class="<?= $is_success ? 'responseMessageSuccess' : 'responseMessageFailure' ?>">
+                                <?= $response_message ?>
+                            </p>
+                        </div>
+                        <?php unset($_SESSION['response']);
+                    } ?>
                 </div>
-                <?php
-                if (isset($_SESSION['response'])) {
-                    $response_message = $_SESSION['response']['message'];
-                    $is_success = $_SESSION['response']['success'];
-                    ?>
-                    <div class="responseMessage">
-                        <p class="<?= $is_success ? 'responseMessageSuccess' : 'responseMessageFailure' ?>">
-                            <?= $response_message ?>
-                        </p>
-                    </div>
-                    <?php unset($_SESSION['response']);
-                } ?>
-            </div>
+            <?php } else { ?>
+                <div id="accessDeniedErrorMessage">Access denied.</div>
+            <?php } ?>
         </div>
     </div>
 

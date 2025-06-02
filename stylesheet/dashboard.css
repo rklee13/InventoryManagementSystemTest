@@ -636,3 +636,11 @@ td {
     transition: 0.3s;
   }
 }
+
+div#accessDeniedErrorMessage {
+  background-color: white;
+  text-align: center;
+  color: red;
+  font-size: 20px;
+  padding: 11px;
+}

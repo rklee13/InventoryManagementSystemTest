@@ -6,7 +6,7 @@ include "connection.php";
 include 'tableColumns.php';
 
 $id = (int) $_POST['id'];
-$table_name = $_SESSION['table'];
+$table_name = $show_table ?? $_SESSION['table'];
 $columns = $table_update_columns_mapping[$table_name];
 
 // Loop through the columns
@@ -58,6 +58,7 @@ if (isset($databaseArray['permissions'])) {
         die;
     }
 }
+
 
 $queryString = rtrim($queryString, ",");
 if (isset($columns['last_name'])) {

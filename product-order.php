@@ -26,52 +26,55 @@ $products = json_encode($products);
         <div class="dashboardContentContainer" id="dashboardContentContainer">
             <!-- Top Navigator bars -->
             <?php include 'partials/app-topnav.php' ?>
-
-            <!-- Main content section -->
-            <div class="dashboardContent">
-                <div class="dashboardContentMain">
-                    <div class="rowInfo">
-                        <div class="column column-12">
-                            <h1><i class="fa-solid fa-user-plus"></i> Order Product</h1>
-                            <div id="userAddFormContainer">
-                                <form action="database/saveOrder.php" method="POST">
-                                    <div class="alignRight">
-                                        <!-- Only type submit should trigger the form action -->
-                                        <button type="button" id="orderProductsButton"
-                                            class="orderButton orderProductsButton">Add
-                                            Another Product</button>
-                                    </div>
-                                    <div id="orderProductLists">
-                                        <p id="noProductData" style="color: #9f9f9f;">No products selected.</p>
-                                        <!-- <div class="orderProductRow">
-                                            <div>
-                                                <label for="product_name">PRODUCT NAME: </label>
-                                                <select id="product_name" name="product_name"></select>
-                                            </div>
-                                        </div> -->
-                                    </div>
-                                    <div class="alignRight marginTop20">
-                                        <button type="submit" id="submitOrderProductsButton"
-                                            class="orderButton submitOrderProductsButton">Submit Order</button>
-                                    </div>
-                                </form>
-                            </div>
-                            <?php
-                            if (isset($_SESSION['response'])) {
-                                $response_message = $_SESSION['response']['message'];
-                                $is_success = $_SESSION['response']['success'];
-                                ?>
-                                <div class="responseMessage">
-                                    <p class="<?= $is_success ? 'responseMessageSuccess' : 'responseMessageFailure' ?>">
-                                        <?= $response_message ?>
-                                    </p>
+            <?php if (in_array('purchaseOrder_create', $user['permissions'])) { ?>
+                <!-- Main content section -->
+                <div class="dashboardContent">
+                    <div class="dashboardContentMain">
+                        <div class="rowInfo">
+                            <div class="column column-12">
+                                <h1><i class="fa-solid fa-user-plus"></i> Order Product</h1>
+                                <div id="userAddFormContainer">
+                                    <form action="database/saveOrder.php" method="POST">
+                                        <div class="alignRight">
+                                            <!-- Only type submit should trigger the form action -->
+                                            <button type="button" id="orderProductsButton"
+                                                class="orderButton orderProductsButton">Add
+                                                Another Product</button>
+                                        </div>
+                                        <div id="orderProductLists">
+                                            <p id="noProductData" style="color: #9f9f9f;">No products selected.</p>
+                                            <!-- <div class="orderProductRow">
+                                                <div>
+                                                    <label for="product_name">PRODUCT NAME: </label>
+                                                    <select id="product_name" name="product_name"></select>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <div class="alignRight marginTop20">
+                                            <button type="submit" id="submitOrderProductsButton"
+                                                class="orderButton submitOrderProductsButton">Submit Order</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <?php unset($_SESSION['response']);
-                            } ?>
+                                <?php
+                                if (isset($_SESSION['response'])) {
+                                    $response_message = $_SESSION['response']['message'];
+                                    $is_success = $_SESSION['response']['success'];
+                                    ?>
+                                    <div class="responseMessage">
+                                        <p class="<?= $is_success ? 'responseMessageSuccess' : 'responseMessageFailure' ?>">
+                                            <?= $response_message ?>
+                                        </p>
+                                    </div>
+                                    <?php unset($_SESSION['response']);
+                                } ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php } else { ?>
+                <div id="accessDeniedErrorMessage">Access denied.</div>
+            <?php } ?>
         </div>
     </div>
     <?php include('partials/app-scripts.php') ?>

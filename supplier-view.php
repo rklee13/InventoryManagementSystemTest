@@ -25,38 +25,38 @@ $suppliers = include 'database/showAll.php';
         <div class="dashboardContentContainer" id="dashboardContentContainer">
             <!-- Top Navigator bars -->
             <?php include 'partials/app-topnav.php' ?>
-
-            <!-- Main content section -->
-            <div class="dashboardContent">
-                <div class="dashboardContentMain">
-                    <div class="rowInfo">
-                        <div class="column column-12">
-                            <h1><i class="fa-solid fa-users"></i> List of Current Suppliers</h1>
-                            <div class="userListContent">
-                                <div class="users">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Name</th>
-                                                <th>Location</th>
-                                                <th>Contact Details</th>
-                                                <th>Products</th>
-                                                <th>Created By</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($suppliers as $index => $supplier): ?>
+            <?php if (in_array('supplier_view', $user['permissions'])) { ?>
+                <!-- Main content section -->
+                <div class="dashboardContent">
+                    <div class="dashboardContentMain">
+                        <div class="rowInfo">
+                            <div class="column column-12">
+                                <h1><i class="fa-solid fa-users"></i> List of Current Suppliers</h1>
+                                <div class="userListContent">
+                                    <div class="users">
+                                        <table>
+                                            <thead>
                                                 <tr>
-                                                    <td><?= $index + 1 ?></td>
-                                                    <td id="supplierName"><?= $supplier['supplier_name'] ?></td>
-                                                    <td id="supplierLocation"><?= $supplier['supplier_location'] ?></td>
-                                                    <td id="supplierEmail"><?= $supplier['email'] ?></td>
-                                                    <td id="productsList">
-                                                        <?php
+                                                    <th>#</th>
+                                                    <th>Name</th>
+                                                    <th>Location</th>
+                                                    <th>Contact Details</th>
+                                                    <th>Products</th>
+                                                    <th>Created By</th>
+                                                    <th>Created At</th>
+                                                    <th>Updated At</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($suppliers as $index => $supplier): ?>
+                                                    <tr>
+                                                        <td><?= $index + 1 ?></td>
+                                                        <td id="supplierName"><?= $supplier['supplier_name'] ?></td>
+                                                        <td id="supplierLocation"><?= $supplier['supplier_location'] ?></td>
+                                                        <td id="supplierEmail"><?= $supplier['email'] ?></td>
+                                                        <td id="productsList">
+                                                            <?php
                                                             $supplierId = $supplier['id'];
                                                             $stmt = $connection->prepare("SELECT product_name FROM products,productSupplier WHERE productSupplier.supplier=$supplierId AND productSupplier.product=products.id");
                                                             $stmt->execute();
@@ -66,71 +66,76 @@ $suppliers = include 'database/showAll.php';
                                                             $product_list = $product_array && count($product_array) > 0 ?
                                                                 "<ul><li>" . implode("</li><li>", $product_array) . "</li></ul>" : "Not Set";
                                                             echo $product_list;
-                                                        ?>
-                                                    </td>
-                                                    <td id="createdBy"">
-                                                        <?php
-                                                        $userId = $supplier['created_by'];
-                                                        $stmt = $connection->prepare("SELECT * FROM UserLoginInformation WHERE id=$userId");
-                                                        $stmt->execute();
-                                                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                                                            ?>
+                                                        </td>
+                                                        <td id="createdBy"">
+                                                            <?php
+                                                            $userId = $supplier['created_by'];
+                                                            $stmt = $connection->prepare("SELECT * FROM UserLoginInformation WHERE id=$userId");
+                                                            $stmt->execute();
+                                                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                                                        $created_by = $row['first_name'] . ' ' . $row['last_name'];
-                                                        echo $created_by;
-                                                        ?>
-                                                    </td>
-                                                    <td><?= date('M d, Y h:i:s A e', strtotime($supplier['created_at'])) ?></td>
-                                                    <td><?= date('M d, Y h:i:s A e', strtotime($supplier['updated_at'])) ?></td>
-                                                    <td>
-                                                        <a href="" id="editSupplierButton"
-                                                        data-supplierid="<?= $supplier['id'] ?>" class="editButton"><i
-                                                            class="fa-solid fa-pencil"></i>
-                                                        Edit</a> |
-                                                        <a href="" id="deleteSupplierButton"
+                                                            $created_by = $row['first_name'] . ' ' . $row['last_name'];
+                                                            echo $created_by;
+                                                            ?>
+                                                        </td>
+                                                        <td><?= date('M d, Y h:i:s A e', strtotime($supplier['created_at'])) ?></td>
+                                                        <td><?= date('M d, Y h:i:s A e', strtotime($supplier['updated_at'])) ?></td>
+                                                        <td>
+                                                            <a href="" id=" editSupplierButton"
                                                             data-supplierid="<?= $supplier['id'] ?>"
-                                                            data-suppliername="<?= $supplier['supplier_name'] ?>"
-                                                            class="deleteButton"><i class="fa-solid fa-trash"></i>
-                                                            Delete</a>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach ?>
-                                        </tbody>
-                                    </table>
-                                    <p class="totalUserCount">Total Suppliers: <?= count($suppliers) ?></p>
+                                                            class="<?= in_array('supplier_edit', $user['permissions']) ? 'editButton' : 'accessDeniedError' ?>">
+                                                            <i class="fa-solid fa-pencil"></i>
+                                                            Edit</a> |
+                                                            <a href="" id="deleteSupplierButton"
+                                                                data-supplierid="<?= $supplier['id'] ?>"
+                                                                data-suppliername="<?= $supplier['supplier_name'] ?>"
+                                                                class="<?= in_array('supplier_delete', $user['permissions']) ? 'deleteButton' : 'accessDeniedError' ?>">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                                Delete</a>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach ?>
+                                            </tbody>
+                                        </table>
+                                        <p class="totalUserCount">Total Suppliers: <?= count($suppliers) ?></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <?php
+                    if (isset($_SESSION['response'])) {
+                        $response_message = $_SESSION['response']['message'];
+                        $is_success = $_SESSION['response']['success'];
+                        ?>
+                        <div class="responseMessage">
+                            <p class="<?= $is_success ? 'responseMessageSuccess' : 'responseMessageFailure' ?>">
+                                <?= $response_message ?>
+                            </p>
+                        </div>
+                        <?php unset($_SESSION['response']);
+                    } ?>
                 </div>
-                <?php
-                if (isset($_SESSION['response'])) {
-                    $response_message = $_SESSION['response']['message'];
-                    $is_success = $_SESSION['response']['success'];
-                    ?>
-                    <div class="responseMessage">
-                        <p class="<?= $is_success ? 'responseMessageSuccess' : 'responseMessageFailure' ?>">
-                            <?= $response_message ?>
-                        </p>
-                    </div>
-                    <?php unset($_SESSION['response']);
-                } ?>
-            </div>
+            <?php } else { ?>
+                <div id="accessDeniedErrorMessage">Access denied.</div>
+            <?php } ?>
         </div>
     </div>
 
     <?php
-        include('partials/app-scripts.php');
+    include('partials/app-scripts.php');
 
-        $show_table = 'products';
-        $products = include('database/showAll.php');
-        $products_array=[];
-        foreach ($products as $product) {
-            $products_array[$product['id']]=$product['product_name'];
-        }
+    $show_table = 'products';
+    $products = include('database/showAll.php');
+    $products_array = [];
+    foreach ($products as $product) {
+        $products_array[$product['id']] = $product['product_name'];
+    }
 
-        if ($products_array && count($products_array)>0) {
-            $products_array=json_encode($products_array);
-        }
+    if ($products_array && count($products_array) > 0) {
+        $products_array = json_encode($products_array);
+    }
     ?>
     <script>
         var productsList = <?= $products_array ?>;
@@ -146,48 +151,51 @@ $suppliers = include 'database/showAll.php';
                 document.addEventListener('click', function (e) {
                     const targetElement = e.target;
                     const targetElememtId = targetElement.id;
+                    const classList = targetElement.classList;
+                    
+                    if (!classList.contains("accessDeniedError")) {
+                        if (targetElememtId === 'deleteSupplierButton') {
+                            e.preventDefault(); // This prevents the automatic page refresh from the <a> element
 
-                    if (targetElememtId === 'deleteSupplierButton') {
-                        e.preventDefault(); // This prevents the automatic page refresh from the <a> element
+                            const supplierId = targetElement.dataset.supplierid;
+                            const supplierName = targetElement.dataset.suppliername;
 
-                        const supplierId = targetElement.dataset.supplierid;
-                        const supplierName = targetElement.dataset.suppliername;
-                        
-                        BootstrapDialog.confirm({
-                            type: BootstrapDialog.TYPE_DANGER,
-                            title: 'Delete Supplier',
-                            message: 'Are you sure you want to delete <strong>' + supplierName + '</strong>?',
-                            callback: function (isDelete) {
-                                if (isDelete) {
-                                    $.ajax({
-                                        method: "POST",
-                                        data: {
-                                            id: supplierId,
-                                            name: supplierName,
-                                            table: 'suppliers',
-                                        },
-                                        url: './database/delete.php',
-                                        dataType: 'JSON',
-                                        success: function (data) {
+                            BootstrapDialog.confirm({
+                                type: BootstrapDialog.TYPE_DANGER,
+                                title: 'Delete Supplier',
+                                message: 'Are you sure you want to delete <strong>' + supplierName + '</strong>?',
+                                callback: function (isDelete) {
+                                    if (isDelete) {
+                                        $.ajax({
+                                            method: "POST",
+                                            data: {
+                                                id: supplierId,
+                                                name: supplierName,
+                                                table: 'suppliers',
+                                            },
+                                            url: './database/delete.php',
+                                            dataType: 'JSON',
+                                            success: function (data) {
 
-                                            BootstrapDialog.alert({
-                                                type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
-                                                message: data.message,
-                                                callback: function () {
-                                                    if (data.success) location.reload();
-                                                }
-                                            });
-                                        }
-                                    });
+                                                BootstrapDialog.alert({
+                                                    type: data.success ? BootstrapDialog.TYPE_SUCCESS : BootstrapDialog.TYPE_DANGER,
+                                                    message: data.message,
+                                                    callback: function () {
+                                                        if (data.success) location.reload();
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        });
-                    } else if (targetElememtId === 'editSupplierButton') {
-                        e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
+                            });
+                        } else if (targetElememtId === 'editSupplierButton') {
+                            e.preventDefault(); // This prevents the automatic page refresh from the <a> element and loading
 
-                        // Get the data
-                        const supplierId = targetElement.dataset.supplierid;
-                        vm.showEditDialog(supplierId);
+                            // Get the data
+                            const supplierId = targetElement.dataset.supplierid;
+                            vm.showEditDialog(supplierId);
+                        }
                     }
                 });
             }
@@ -199,7 +207,7 @@ $suppliers = include 'database/showAll.php';
 
                     for (const [productId, productName] of Object.entries(productsList)) {
                         let selected = currentProducts.includes(parseInt(productId)) ? 'selected' : '';
-                        productsOption +="<option "+ selected +" value='"+productId+"'>"+productName+"</option>";
+                        productsOption += "<option " + selected + " value='" + productId + "'>" + productName + "</option>";
                     }
 
                     BootstrapDialog.confirm({
@@ -221,7 +229,7 @@ $suppliers = include 'database/showAll.php';
                                 <div class="appFormInputContainer">\
                                     <label for="productsSelect">Products:</label>\
                                     <select name="products[]" id="productsSelect" class="appFormInput" multiple>\
-                                        '+ productsOption +'\
+                                        '+ productsOption + '\
                                     </select>\
                                 </div>\
                                 </form>\

@@ -34,38 +34,38 @@ include('database/delivery_history_line_graph.php');
       <!-- Top Navigator bars -->
       <?php include 'partials/app-topnav.php' ?>
       <?php if (in_array('dashboard_view', $user['permissions'])) { ?>
-      <div class="dashboardContent">
-        <div class="dashboardChartContainer dashboardContentMain">
-          <div class="col50">
-            <figure class="highcharts-figure">
-              <div id="pieChartContainer"></div>
-              <p class="highcharts-description" style="text-align: center">
-                Breakdown of all purchased orders by status.
-              </p>
-            </figure>
+        <div class="dashboardContent">
+          <div class="dashboardChartContainer dashboardContentMain">
+            <div class="col50">
+              <figure class="highcharts-figure">
+                <div id="pieChartContainer"></div>
+                <p class="highcharts-description" style="text-align: center">
+                  Breakdown of all purchased orders by status.
+                </p>
+              </figure>
+            </div>
+            <div class="col50">
+              <figure class="highcharts-figure">
+                <div id="barChartContainer"></div>
+                <p class="highcharts-description" style="text-align: center">
+                  Total product count based on suppliers.
+                </p>
+              </figure>
+            </div>
           </div>
-          <div class="col50">
+          <div class="dashboardContentMain">
             <figure class="highcharts-figure">
-              <div id="barChartContainer"></div>
-              <p class="highcharts-description" style="text-align: center">
-                Total product count based on suppliers.
+              <div id="deliveryHistoryLineChartContainer"></div>
+              <p class="highcharts-description">
+                Basic line chart showing trends in a dataset. This chart includes the
+                <code>series-label</code> module, which adds a label to each line for
+                enhanced readability.
               </p>
             </figure>
           </div>
         </div>
-        <div class="dashboardContentMain">
-          <figure class="highcharts-figure">
-            <div id="deliveryHistoryLineChartContainer"></div>
-            <p class="highcharts-description">
-              Basic line chart showing trends in a dataset. This chart includes the
-              <code>series-label</code> module, which adds a label to each line for
-              enhanced readability.
-            </p>
-          </figure>
-        </div>
-      </div>
       <?php } else { ?>
-        <div id="errorMessage"> Access denied.</div>
+        <div id="accessDeniedErrorMessage">Access denied.</div>
       <?php }?>
     </div>
   </div>

@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $query="SELECT * FROM `UserLoginInformation` WHERE email='$email' AND password='$password'";
+    $query="SELECT * FROM `UserLoginInformation` WHERE email='$email'";
     $stmt = $connection->prepare($query);
     $result=$stmt->execute();
 
@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
 
         $user_exist = false;
         foreach($usersInfo as $user) {
-            if ($password === $user['password']) {
+            // Since we hashed the password, we need to use password_verify to verify it
+            if (password_verify($password, $user['password'])) {
                 $user_exist = true;
                 $user['permissions'] = explode(',', $user['permissions']);
 
@@ -33,10 +34,10 @@ if ($_SERVER['REQUEST_METHOD']=='POST') {
             }
         }
 
-        if ($user_exist) {
+        if ($usersInfo) {
             header('location:dashboard.php');
         } else {
-            $error_message="Invalid user information. Verify the login information is correct, and then please try again.";    
+            $error_message="Could not find user in system. Verify the login information is correct, and then please try again.";    
         }
 
     } else {

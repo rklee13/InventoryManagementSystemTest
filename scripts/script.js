@@ -40,8 +40,18 @@ sidebarToggleButton.addEventListener("click", (event) => {
 document.addEventListener("click", function (e) {
   // e.preventDefault();
   const clickedElement = e.target;
+  const classLists = clickedElement.classList;
+console.log(classLists);
+  if (classLists.contains("accessDeniedError")) {
+    e.preventDefault();
 
-  if (clickedElement.classList.contains("showHideSubMenu")) {
+    BootstrapDialog.alert({
+      type: BootstrapDialog.TYPE_DANGER,
+      message: "Access Denied.",
+    });
+  }
+
+  if (classLists.contains("showHideSubMenu")) {
     const targetSubMenu = clickedElement
       .closest("li")
       .querySelector(".subMenus");
