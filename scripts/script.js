@@ -1,6 +1,6 @@
 var sidebarIsOpen = true;
 
-sidebarToggleButton.addEventListener("click", (event) => {
+sidebarToggleButton?.addEventListener("click", (event) => {
   event.preventDefault();
 
   if (sidebarIsOpen) {

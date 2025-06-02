@@ -4,12 +4,13 @@
     <title>IMS Homepage - Inventory Management System</title>
     <link rel="stylesheet" href="stylesheet/homepage.css">
     <script src="https://kit.fontawesome.com/3a3f98ed32.js" crossorigin="anonymous"></script>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
 </head>
 
 <body>
     <div class="homepageTopHeaderLine">
         <div class="homepageContainer">
-            <a href="login.php">Login</a>
+            <a href="login.php" id="loginButton">Login</a>
         </div>
     </div>
     <div class="homepageBanner">
